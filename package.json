@@ -1,0 +1,25 @@
+{
+  "name": "el_santuario_api",
+  "version": "1.0.0",
+  "description": "base backend",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node ./index.js",
+    "server": "nodemon index.js"
+  },
+  "keywords": [
+    "MVC",
+    "Sequlize",
+    "node",
+    "MySQL"
+  ],
+  "author": "David Sanchez",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
