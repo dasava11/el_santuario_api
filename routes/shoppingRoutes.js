@@ -1,5 +1,5 @@
 import express from "express"
-import { getAllShoppings, getShoppingById, createShopping, editShopping, destroyShopping } from "../controllers/shoppingsController"
+import { getAllShoppings, getShoppingById, createShopping, editShopping, destroyShopping } from "../controllers/shoppingsController.js"
 
  const router = express.Router()
 
