@@ -16,7 +16,7 @@ const getSuppliersById = (req,res) => {
     })
 }
 
-const updateSuppliers = (req,res) => {
+const editSuppliers = (req,res) => {
     res.render('', {
 
     })
@@ -27,10 +27,18 @@ const deleteSuppliers = (req,res) => {
 
     })
 }
+
+const destroySuppliers = (req,res) => {
+    res.render('', {
+
+    })
+}
+
 export{
     createSuppliers,
     getAllSuppliers,
     getSuppliersById,
-    updateSuppliers,
-    deleteSuppliers
+    editSuppliers,
+    deleteSuppliers,
+    destroySuppliers
 };

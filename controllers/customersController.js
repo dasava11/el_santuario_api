@@ -16,7 +16,7 @@ const getCustomerById = (req,res) => {
     })
 }
 
-const updateCustomer = (req,res) => {
+const editCustomer = (req,res) => {
     res.render('', {
 
     })
@@ -27,10 +27,18 @@ const deleteCustomer = (req,res) => {
 
     })
 }
+
+const destroyCustomer = (req,res) => {
+    res.render('', {
+
+    })
+}
+
 export{
     createCustomer,
     getAllCustomers,
     getCustomerById,
-    updateCustomer,
-    deleteCustomer
+    editCustomer,
+    deleteCustomer,
+    destroyCustomer
 };
