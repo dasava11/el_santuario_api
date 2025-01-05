@@ -16,7 +16,7 @@ const getProductById = (req,res) => {
     })
 }
 
-const updateProduct = (req,res) => {
+const editProduct = (req,res) => {
     res.render('', {
 
     })
@@ -27,10 +27,19 @@ const deleteProduct = (req,res) => {
 
     })
 }
+
+const destroyProduct = (req,res) => {
+    res.render('', {
+
+    })
+}
+
+
 export{
     createProduct,
     getAllProducts,
     getProductById,
-    updateProduct,
-    deleteProduct
+    editProduct,
+    deleteProduct,
+    destroyProduct
 };

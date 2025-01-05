@@ -1,6 +1,6 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('detail_purchases', {
+import Sequelize from 'sequelize';
+export default function(sequelize, DataTypes) {
+  return sequelize.define('DetailPurchases', {
     id_detail_purchases: {
       type: DataTypes.INTEGER,
       allowNull: false,
