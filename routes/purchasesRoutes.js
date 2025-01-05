@@ -1,5 +1,5 @@
 import express from "express"
-import { getAllPurchases, getPurchasesById, createPurchases, editPurchases, destroyPurchases } from "../controllers/purchasesController"
+import { getAllPurchases, getPurchasesById, createPurchases, editPurchases, destroyPurchases } from "../controllers/purchasesController.js"
 
  const router = express.Router()
 
