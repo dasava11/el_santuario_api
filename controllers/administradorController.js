@@ -1,57 +1,97 @@
 import { render } from "pug";
 import { success, error } from "../red/answers.js";
 import { Sequelize, Op } from "sequelize";
-import db from '../models/index.js';
+import db from "../models/index.js";
 
 const getAllUsers = async (req, res) => {
-    const { users } = db.models;  // Desestructuración para obtener el modelo 'users'
-    
-    try {
-      const allUsers = await users.findAll();  
-      if (allUsers.length === 0) {
-        return res.status(404).json({message: "No hay usuarios"})
-       }
-      res.status(200).json(allUsers);  
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+  const { users } = db.models; // Desestructuración para obtener el modelo 'users'
+
+  try {
+    const allUsers = await users.findAll({
+      include: [{ model: purchases }, { model: userType }],
+    });
+
+    if (allUsers.length === 0) {
+      return res.status(404).json({ message: "No hay usuarios" });
     }
-  };
 
-const getUserById = (req,res) => {
-    res.render('administrador/consultar', {
+    res.status(200).json(allUsers);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
-    })
-}
+const getUserById = async (req, res) => {
+  const { users, purchases, userType } = db.models;
+  const { id } = req.params;
+  try {
+    if (!id) {
+      return res.status(400).json({ message: "No se envió un id" });
+    }
 
-const createUser = (req,res) => {
-    res.render('administrador/editar', {
+    const userById = await users.findByPk(id, {
+      include: [{ model: purchases }, { model: userType }],
+    });
 
-    })
-}
+    if (!userById) {
+      return res
+        .status(404)
+        .json({ message: `No se encontraron usuarios con el id: ${id}` });
+    }
+    return res.status(200).json(userById);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-const deleteUser = (req,res) => {
-    res.render('administrador/editar', {
+const getUserByName = async (req, res) => {
+  const { name } = req.query;
+  const { users } = db.models;
+  try {
+    if (!name) {
+      return res.status(400).json({ message: "No se envió un nombre" });
+    }
+    const userByName = await users.findAll({
+      where: {
+        name: {
+          [Op.iLike]: "%" + name + "%",
+        },
+      },
+      include: [{ model: purchases }, { model: userType }],
+    });
 
-    })
-}
+    if (userByName.length === 0) {
+      return res.status(400).json({ message: `${name} no fue encontrado` });
+    }
 
-const editUser = (req,res) => {
-    res.render('administrador/editar', {
+    return res.status(200).json(userByName);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-    })
-}
+const createUser = (req, res) => {
+  res.render("administrador/editar", {});
+};
 
-const destroyUser = (req,res) => {
-    res.render('administrador/editar', {
+const deleteUser = (req, res) => {
+  res.render("administrador/editar", {});
+};
 
-    })
-}
+const editUser = (req, res) => {
+  res.render("administrador/editar", {});
+};
+
+const destroyUser = (req, res) => {
+  res.render("administrador/editar", {});
+};
 
 export {
-    getAllUsers,
-    getUserById,
-    createUser,
-    editUser,
-    deleteUser,
-    destroyUser
-}
+  getAllUsers,
+  getUserById,
+  getUserByName,
+  createUser,
+  editUser,
+  deleteUser,
+  destroyUser,
+};
