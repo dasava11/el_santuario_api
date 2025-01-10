@@ -19,11 +19,12 @@ const getAllShoppings = async (req, res) => {
 
 // Obtener una compra por ID
 const getShoppingById = async (req, res) => {
-  const { Shopping } = db.models;
+  const { shopping } = db.models;
+
   const { shopping_id } = req.params;
 
   try {
-    const shopping = await Shopping.findByPk(shopping_id);
+    const shopping = await shopping.findByPk(shopping_id);
     if (!shopping) {
       return res.status(404).json({ message: "Compra no encontrada" });
     }
@@ -36,7 +37,15 @@ const getShoppingById = async (req, res) => {
 // Crear una nueva compra
 const createShopping = async (req, res) => {
   const { Shopping } = db.models;
-  const { date, userId, customer, payment_method, taxes, subtotal, total_sale } = req.body;
+  const {
+    date,
+    userId,
+    customer,
+    payment_method,
+    taxes,
+    subtotal,
+    total_sale,
+  } = req.body;
 
   try {
     const newShopping = await Shopping.create({
@@ -58,7 +67,15 @@ const createShopping = async (req, res) => {
 const editShopping = async (req, res) => {
   const { Shopping } = db.models;
   const { shopping_id } = req.params;
-  const { date, userId, customer, payment_method, taxes, subtotal, total_sale } = req.body;
+  const {
+    date,
+    userId,
+    customer,
+    payment_method,
+    taxes,
+    subtotal,
+    total_sale,
+  } = req.body;
 
   try {
     const shopping = await Shopping.findByPk(shopping_id);
