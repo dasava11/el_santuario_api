@@ -202,7 +202,7 @@ const destroyUser = async (req, res) => {
 export {
   getAllUsers,
   getUserById,
-  getUsersByName,
+  getUserByName,
   createUser,
   editUser,
   deleteUser,
