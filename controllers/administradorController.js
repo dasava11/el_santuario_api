@@ -41,7 +41,7 @@ const getUserById = async (req, res) => {
   }
 };
 
-const getUsersByName = async (req, res) => {
+const getUserByName = async (req, res) => {
   const { users, shopping, userType } = db.models;
   const { name } = req.query;
   try {
