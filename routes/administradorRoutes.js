@@ -6,14 +6,14 @@ import {
   deleteUser,
   destroyUser,
   editUser,
-  getUsersByName,
+  getUserByName,
 } from "../controllers/administradorController.js";
 
 const router = express.Router();
 
 router.get("/", getAllUsers);
 router.get("/:user_id", getUserById);
-router.get("/name/", getUsersByName);
+router.get("/name /", getUserByName);
 router.post("/", createUser);
 router.put("/:user_id", editUser);
 router.delete("/:user_id", deleteUser);

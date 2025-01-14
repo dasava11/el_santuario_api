@@ -2,7 +2,7 @@ import { Sequelize, Op } from "sequelize";
 import db from "../models/index.js";
 
 const createCustomer = async (req, res) => {
-  const { customers, shopping } = db.models;
+  const { customers } = db.models;
   const { name, document, phone, email } = req.body;
   try {
     if (!name || !document) {
