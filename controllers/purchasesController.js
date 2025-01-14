@@ -34,7 +34,8 @@ const getPurchasesById = async (req, res) => {
 
 // Crear una nueva compra
 const createPurchases = async (req, res) => {
-  const { date, count, price, supplier, taxes, subtotal, total_price } = req.body;
+  const { date, count, price, supplier, taxes, subtotal, total_price } =
+    req.body;
 
   try {
     const newPurchase = await purchases.create({
@@ -46,7 +47,9 @@ const createPurchases = async (req, res) => {
       subtotal,
       total_price,
     });
-    res.status(201).json({ message: "Compra creada exitosamente", purchase: newPurchase });
+    res
+      .status(201)
+      .json({ message: "Compra creada exitosamente", purchase: newPurchase });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -55,7 +58,8 @@ const createPurchases = async (req, res) => {
 // Actualizar una compra existente
 const editPurchases = async (req, res) => {
   const { product_id } = req.params;
-  const { date, count, price, supplier, taxes, subtotal, total_price } = req.body;
+  const { date, count, price, supplier, taxes, subtotal, total_price } =
+    req.body;
 
   try {
     const purchase = await purchases.findByPk(product_id);
@@ -73,7 +77,9 @@ const editPurchases = async (req, res) => {
       total_price,
     });
 
-    res.status(200).json({ message: "Compra actualizada exitosamente", purchase });
+    res
+      .status(200)
+      .json({ message: "Compra actualizada exitosamente", purchase });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -97,6 +103,7 @@ const deletePurchases = async (req, res) => {
 }; */
 
 // Eliminar (borrado físico) una compra
+
 const destroyPurchases = async (req, res) => {
   const { product_id } = req.params;
 
