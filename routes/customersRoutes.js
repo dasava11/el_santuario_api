@@ -17,6 +17,5 @@ router.get("/name/", getCustomerByName);
 router.post("/", createCustomer);
 router.put("/", editCustomer);
 router.delete("/:customer_id", deleteCustomer);
-router.delete("/destroy/:customer_id", destroyCustomer);
 
 export default router;

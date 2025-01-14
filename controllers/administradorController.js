@@ -1,4 +1,3 @@
-import { success, error } from "../red/answers.js";
 import { Sequelize, Op } from "sequelize";
 import db from "../models/index.js";
 
@@ -107,7 +106,7 @@ const createUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const { users } = db.models;
-  const { id_user, username, password, email, type_user, active } = req.body;
+  const { id_user, username, password, email, type_user } = req.body;
   try {
     const existingUser = await users.findByPk(id_user);
 
@@ -131,10 +130,6 @@ const editUser = async (req, res) => {
 
     if (type_user) {
       await existingUser.update({ type_user });
-    }
-
-    if (active) {
-      await existingUser.update({ active });
     }
 
     return res
