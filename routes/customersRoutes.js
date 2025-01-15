@@ -5,7 +5,6 @@ import {
   getCustomerById,
   editCustomer,
   deleteCustomer,
-  destroyCustomer,
   getCustomerByName,
 } from "../controllers/customersController.js";
 
