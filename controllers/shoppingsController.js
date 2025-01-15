@@ -1,13 +1,12 @@
-import { success, error } from "../red/answers.js";
-import { Sequelize, Op } from "sequelize";
+import { Sequelize, Op, Transaction } from "sequelize";
 import db from "../models/index.js";
 
 // Obtener todos los registros de compras
 const getAllShoppings = async (req, res) => {
-  const { shopping } = db.models;
+  const { shopping, detailShopping } = db.models;
 
   try {
-    const allShoppings = await shopping.findAll();
+    const allShoppings = await shopping.findAll({include: [{ model: detailShopping }]});
     if (allShoppings.length === 0) {
       return res.status(404).json({ message: "No hay registros de compras" });
     }
@@ -24,11 +23,11 @@ const getShoppingById = async (req, res) => {
   const { shopping_id } = req.params;
 
   try {
-    const shopping = await shopping.findByPk(shopping_id);
-    if (!shopping) {
+    const shoppingId = await shopping.findByPk(shopping_id);
+    if (!shoppingId) {
       return res.status(404).json({ message: "Compra no encontrada" });
     }
-    res.status(200).json(shopping);
+    res.status(200).json(shoppingId);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -36,8 +35,11 @@ const getShoppingById = async (req, res) => {
 
 // Crear una nueva compra
 const createShopping = async (req, res) => {
-  const { Shopping } = db.models;
+
+  const { shopping, detailShopping } = db.models;
+
   const {
+    id_shopping,
     date,
     userId,
     customer,
@@ -45,18 +47,34 @@ const createShopping = async (req, res) => {
     taxes,
     subtotal,
     total_sale,
+    detailShoppingBody
   } = req.body;
 
+/*   const {id_detail_shopping, id_shoppings, id_products, count, unit_price, value_taxes, total} = req.body */
+
   try {
-    const newShopping = await Shopping.create({
+
+    const newShopping = await shopping.create({
+      id_shopping, 
       date,
       userId,
       customer,
       payment_method,
       taxes,
       subtotal,
-      total_sale,
+      total_sale, 
     });
+
+    /*const detailShoppingData = await detailShoppingBody.map(e => ({id_detail_shopping: e.id_detail_shopping, id_shopping: newShopping.id_shopping, id_products: e.id_products, count: e.count, unit_price: e.unit_price, value_taxes: e.value_taxes, total: e.total })); */
+if(detailShoppingBody.length > 0)
+{
+    for (let i = 0; i < detailShoppingBody.length; i++) {
+      await detailShopping.create({
+        id_detail_shopping: detailShoppingBody[i].id_detail_shopping, id_shopping: newShopping.id_shopping, id_products: detailShoppingBody[i].id_products, count: detailShoppingBody[i].count, unit_price: detailShoppingBody[i].unit_price, value_taxes: detailShoppingBody[i].value_taxes, total: detailShoppingBody[i].total 
+      })
+    }
+  }
+    console.log("se creo la compra");
     res.status(201).json(newShopping);
   } catch (error) {
     res.status(500).json({ error: error.message });

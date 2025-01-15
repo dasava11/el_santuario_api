@@ -9,17 +9,17 @@ const createCustomer = async (req, res) => {
       return res.status(400).json({ message: "Falta información" });
     }
 
-    const existingClient = await customers.findOne({
+/*     const existingClient = await customers.findOne({
       where: {
         name: {
           [Op.iLike]: name,
         },
       },
-    });
+    }); */
 
-    if (existingClient) {
+/*     if (existingClient) {
       return res.status(400).json({ message: `${name} ya existe` });
-    }
+    } */
 
     await customers.create({
       name,
