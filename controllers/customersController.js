@@ -37,9 +37,9 @@ const createCustomer = async (req, res) => {
 const getAllCustomers = async (req, res) => {
   const { customers, shopping } = db.models;
   try {
-    const clients = await customers.findAll({
+    const clients = await customers.findAll(/* {
       include: [{ model: shopping }],
-    });
+    } */);
 
     if (clients.length === 0) {
       return res.status(404).json({ message: "No se encontraron clientes" });
@@ -83,7 +83,7 @@ const getCustomerByName = async (req, res) => {
       return res.status(400).json({ message: "No se envió un nombre" });
     }
 
-    const customerByName = await customers.findAll({
+    /* const customerByName = await customers.findAll({
       where: {
         name: {
           [Op.iLike]: "%" + name + "%",
@@ -96,7 +96,7 @@ const getCustomerByName = async (req, res) => {
       return res
         .status(404)
         .json({ message: `No se encontraron clientes con el nombre: ${name}` });
-    }
+    } */
 
     return res.status(200).json(customerByName);
   } catch (error) {

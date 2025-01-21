@@ -6,10 +6,10 @@ const createSuppliers = async (req, res) => {
   const { nit, name, address, city, phone, email, active } = req.body;
 
   try {
-    if (!name || !nit || address || phone || city || active) {
+    if (!name || !nit || address || phone || city || active === undefined) {
       return res.status(400).json({ message: "Falta información" });
     }
-
+/* 
     const existingSupplier = await suppliers.findOne({
       where: {
         name: {
@@ -20,7 +20,7 @@ const createSuppliers = async (req, res) => {
 
     if (existingSupplier) {
       return res.status(400).json({ message: `${name} ya existe` });
-    }
+    } */
 
     await suppliers.create({
       nit,
@@ -88,7 +88,7 @@ const getSuppliersByName = async (req, res) => {
       return res.status(400).json({ message: "No se envió un nombre" });
     }
 
-    const supplierByName = await suppliers.findAll({
+    /* const supplierByName = await suppliers.findAll({
       where: {
         name: {
           [Op.iLike]: "%" + name + "%",
@@ -101,7 +101,7 @@ const getSuppliersByName = async (req, res) => {
       return res.status(404).json({
         message: `No se encontraron proveedores con el nombre: ${name}`,
       });
-    }
+    } */
 
     return res.status(200).json(supplierByName);
   } catch (error) {
