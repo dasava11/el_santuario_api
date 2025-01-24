@@ -9,17 +9,17 @@ const createCustomer = async (req, res) => {
       return res.status(400).json({ message: "Falta información" });
     }
 
-/*     const existingClient = await customers.findOne({
+    const existingClient = await customers.findOne({
       where: {
         name: {
-          [Op.iLike]: name,
+          [Op.like]: name,
         },
       },
-    }); */
+    });
 
-/*     if (existingClient) {
+    if (existingClient) {
       return res.status(400).json({ message: `${name} ya existe` });
-    } */
+    }
 
     await customers.create({
       name,
@@ -37,9 +37,9 @@ const createCustomer = async (req, res) => {
 const getAllCustomers = async (req, res) => {
   const { customers, shopping } = db.models;
   try {
-    const clients = await customers.findAll(/* {
-      include: [{ model: shopping }],
-    } */);
+    const clients = await customers.findAll({
+      include: [{ model: shopping, as: "shoppings" }],
+    });
 
     if (clients.length === 0) {
       return res.status(404).json({ message: "No se encontraron clientes" });
@@ -56,10 +56,12 @@ const getCustomerById = async (req, res) => {
   try {
     const { id } = req.params;
     if (!id) {
-      return res.status(400).json({ message: "No se envió un id" });
+      return res
+        .status(400)
+        .json({ message: "No se envió un id y este es requerido." });
     }
     const customerById = await customers.findByPk(id, {
-      include: [{ model: shopping }],
+      include: [{ model: shopping, as: "shoppings" }],
     });
 
     if (!customerById) {
@@ -79,24 +81,26 @@ const getCustomerByName = async (req, res) => {
   try {
     const { name } = req.query;
 
-    if (!name) {
-      return res.status(400).json({ message: "No se envió un nombre" });
+    if (!name || name.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "El nombre es requerido y no puede estar vacío." });
     }
 
-    /* const customerByName = await customers.findAll({
+    const customerByName = await customers.findAll({
       where: {
         name: {
-          [Op.iLike]: "%" + name + "%",
+          [Op.like]: `%${name}%`,
         },
       },
-      include: [{ model: shopping }],
+      include: [{ model: shopping, as: "shoppings" }],
     });
 
     if (customerByName.length === 0) {
       return res
         .status(404)
         .json({ message: `No se encontraron clientes con el nombre: ${name}` });
-    } */
+    }
 
     return res.status(200).json(customerByName);
   } catch (error) {
