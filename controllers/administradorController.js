@@ -6,7 +6,10 @@ const getAllUsers = async (req, res) => {
 
   try {
     const allUsers = await users.findAll({
-      include: [{ model: shopping }, { model: userType }],
+      include: [
+        { model: shopping, as: "shoppings" },
+        { model: userType, as: "type_user_user_type" },
+      ],
     });
     if (allUsers.length === 0) {
       return res.status(404).json({ message: "No hay usuarios" });
@@ -22,10 +25,15 @@ const getUserById = async (req, res) => {
   const { id } = req.params;
   try {
     if (!id) {
-      return res.status(400).json({ message: "No se envió un id" });
+      return res
+        .status(400)
+        .json({ message: "No se envió un id y este es requerido." });
     }
     const userById = await users.findByPk(id, {
-      include: [{ model: shopping }, { model: userType }],
+      include: [
+        { model: shopping, as: "shoppings" },
+        { model: userType, as: "type_user_user_type" },
+      ],
     });
 
     if (!userById) {
@@ -44,17 +52,22 @@ const getUserByName = async (req, res) => {
   const { users, shopping, userType } = db.models;
   const { name } = req.query;
   try {
-    if (!name) {
-      return res.status(400).json({ message: "No se envió un nombre" });
+    if (!name || name.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "El nombre es requerido y no puede estar vacío." });
     }
 
     const userByName = await users.findAll({
       where: {
         name: {
-          [Op.iLike]: "%" + name + "%",
+          [Op.like]: `%${name}%`,
         },
       },
-      include: [{ model: shopping }, { model: userType }],
+      include: [
+        { model: shopping, as: "shoppings" },
+        { model: userType, as: "type_user_user_type" },
+      ],
     });
 
     if (userByName.length === 0) {
@@ -79,7 +92,7 @@ const createUser = async (req, res) => {
     const existingUser = await users.findOne({
       where: {
         name: {
-          [Op.iLike]: username,
+          [Op.like]: username,
         },
       },
     });

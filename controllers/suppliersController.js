@@ -9,18 +9,18 @@ const createSuppliers = async (req, res) => {
     if (!name || !nit || address || phone || city || active === undefined) {
       return res.status(400).json({ message: "Falta información" });
     }
-/* 
+
     const existingSupplier = await suppliers.findOne({
       where: {
         name: {
-          [Op.iLike]: name,
+          [Op.like]: name,
         },
       },
     });
 
     if (existingSupplier) {
       return res.status(400).json({ message: `${name} ya existe` });
-    } */
+    }
 
     await suppliers.create({
       nit,
@@ -44,7 +44,7 @@ const getAllSuppliers = async (req, res) => {
   const { suppliers, purchases } = db.models;
   try {
     const allSuppliers = await suppliers.findAll({
-      include: [{ model: purchases }],
+      include: [{ model: purchases, as: "purchase" }],
     });
 
     if (allSuppliers.length === 0) {
@@ -65,7 +65,7 @@ const getSuppliersById = async (req, res) => {
       return res.status(400).json({ message: "No se envió un id" });
     }
     const supplierById = await suppliers.findByPk(id, {
-      include: [{ model: purchases }],
+      include: [{ model: purchases, as: "purchase" }],
     });
 
     if (!supplierById) {
@@ -85,23 +85,25 @@ const getSuppliersByName = async (req, res) => {
   const { name } = req.query;
   try {
     if (!name) {
-      return res.status(400).json({ message: "No se envió un nombre" });
+      return res
+        .status(400)
+        .json({ message: "El nombre es requerido y no puede estar vacío." });
     }
 
-    /* const supplierByName = await suppliers.findAll({
+    const supplierByName = await suppliers.findAll({
       where: {
         name: {
-          [Op.iLike]: "%" + name + "%",
+          [Op.like]: `%${name}%`,
         },
       },
-      include: [{ model: purchases }],
+      include: [{ model: purchases, as: "purchase" }],
     });
 
     if (supplierByName.length === 0) {
       return res.status(404).json({
         message: `No se encontraron proveedores con el nombre: ${name}`,
       });
-    } */
+    }
 
     return res.status(200).json(supplierByName);
   } catch (error) {
@@ -158,7 +160,9 @@ const deleteSuppliers = async (req, res) => {
   const { id } = req.params;
   try {
     if (!id) {
-      return res.status(400).json({ message: "No se envió un id" });
+      return res
+        .status(400)
+        .json({ message: "No se envió un id y este es requerido." });
     }
 
     const existingSupplier = await suppliers.findByPk(id);
@@ -190,7 +194,9 @@ const destroySuppliers = async (req, res) => {
   const { id } = req.params;
   try {
     if (!id) {
-      return res.status(400).json({ message: "No se envió un id" });
+      return res
+        .status(400)
+        .json({ message: "No se envió un id y este es requerido." });
     }
 
     if (isNaN(id)) {
