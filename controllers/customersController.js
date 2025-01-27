@@ -111,6 +111,7 @@ const getCustomerByName = async (req, res) => {
 const editCustomer = async (req, res) => {
   const { customers } = db.models;
   const { id_customers, name, document, phone, email } = req.body;
+
   try {
     const existingCustomer = await customers.findByPk(id_customers);
 
@@ -120,29 +121,37 @@ const editCustomer = async (req, res) => {
       });
     }
 
-    if (name) {
-      await existingCustomer.update({ name });
+    const fieldsToUpdate = {};
+
+    if (name !== undefined && name !== existingCustomer.name) {
+      fieldsToUpdate.name = name;
+    }
+    if (document !== undefined && document !== existingCustomer.document) {
+      fieldsToUpdate.document = document;
+    }
+    if (phone !== undefined && phone !== existingCustomer.phone) {
+      fieldsToUpdate.phone = phone;
+    }
+    if (email !== undefined && email !== existingCustomer.email) {
+      fieldsToUpdate.email = email;
     }
 
-    if (document) {
-      await existingCustomer.update({ document });
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(200).json({
+        message: "No hay cambios que realizar, los datos son los mismos.",
+      });
     }
 
-    if (phone) {
-      await existingCustomer.update({ phone });
-    }
-
-    if (email) {
-      await existingCustomer.update({ email });
-    }
+    await existingCustomer.update(fieldsToUpdate);
 
     return res
       .status(200)
-      .json({ message: `${name} fue actualizado con éxito` });
+      .json({ message: `${name || "El cliente"} fue actualizado con éxito` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
 // evaluar si es necesario este servicio, de serlo debe añadirse un atributo de active
 const deleteCustomer = async (req, res) => {
   const { customers } = db.models;

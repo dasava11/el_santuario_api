@@ -2,12 +2,13 @@ import { success, error } from "../red/answers.js";
 import { Sequelize, Op } from "sequelize";
 import db from "../models/index.js";
 
-const { purchases } = db.models;
-
+const { purchases, detailPurchases } = db.models;
 // Obtener todas las compras
 const getAllPurchases = async (req, res) => {
   try {
-    const allPurchases = await purchases.findAll();
+    const allPurchases = await purchases.findAll({
+      include: [{ model: detailPurchases, as: "detail_purchases" }],
+    });
     if (allPurchases.length === 0) {
       return res.status(404).json({ message: "No hay registros de compras" });
     }
@@ -22,7 +23,9 @@ const getPurchasesById = async (req, res) => {
   const { shopping_id } = req.params; // Asegurarse de que el parámetro coincide con las rutas
 
   try {
-    const purchase = await purchases.findByPk(shopping_id);
+    const purchase = await purchases.findByPk(shopping_id, {
+      include: [{ model: detailPurchases, as: "detail_purchases" }],
+    });
     if (!purchase) {
       return res.status(404).json({ message: "Compra no encontrada" });
     }
@@ -34,22 +37,48 @@ const getPurchasesById = async (req, res) => {
 
 // Crear una nueva compra
 const createPurchases = async (req, res) => {
-  const { date, count, price, supplier, taxes, subtotal, total_price } =
-    req.body;
+  const { detailPurchases } = db.models;
+  const {
+    id_purchase,
+    date,
+    count,
+    unit_price,
+    supplier,
+    taxes,
+    subtotal,
+    total_price,
+    detailPurchasesBody,
+  } = req.body;
 
   try {
     const newPurchase = await purchases.create({
+      id_purchase,
       date,
       count,
-      price,
+      unit_price,
       supplier,
       taxes,
       subtotal,
       total_price,
     });
-    res
-      .status(201)
-      .json({ message: "Compra creada exitosamente", purchase: newPurchase });
+    if (detailPurchasesBody.length > 0) {
+      for (let i = 0; i < detailPurchasesBody.length; i++) {
+        await detailPurchases.create({
+          id_detail_purchases: detailPurchasesBody[i].id_detail_purchases,
+          id_purchase: newPurchase.id_purchase,
+          id_products: detailPurchasesBody[i].id_products,
+          count: detailPurchasesBody[i].count,
+          unit_price: detailPurchasesBody[i].unit_price,
+          value_taxes: detailPurchasesBody[i].value_taxes,
+          total: detailPurchasesBody[i].total,
+        });
+      }
+    }
+
+    res.status(201).json({
+      message: "Compra al proveedor generada con exito.",
+      purchase: newPurchase,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

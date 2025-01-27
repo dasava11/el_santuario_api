@@ -84,7 +84,7 @@ const getSuppliersByName = async (req, res) => {
   const { suppliers, purchases } = db.models;
   const { name } = req.query;
   try {
-    if (!name) {
+    if (!name || name.trim() === "") {
       return res
         .status(400)
         .json({ message: "El nombre es requerido y no puede estar vacío." });
@@ -114,6 +114,7 @@ const getSuppliersByName = async (req, res) => {
 const editSuppliers = async (req, res) => {
   const { suppliers } = db.models;
   const { id_suppliers, nit, name, address, city, phone, email } = req.body;
+
   try {
     const existingSupplier = await suppliers.findByPk(id_suppliers);
 
@@ -123,33 +124,38 @@ const editSuppliers = async (req, res) => {
       });
     }
 
-    if (nit) {
-      await existingCustomer.update({ document });
+    const fieldsToUpdate = {};
+
+    if (nit !== undefined && nit !== existingSupplier.nit) {
+      fieldsToUpdate.nit = nit;
+    }
+    if (name !== undefined && name !== existingSupplier.name) {
+      fieldsToUpdate.name = name;
+    }
+    if (address !== undefined && address !== existingSupplier.address) {
+      fieldsToUpdate.address = address;
+    }
+    if (city !== undefined && city !== existingSupplier.city) {
+      fieldsToUpdate.city = city;
+    }
+    if (phone !== undefined && phone !== existingSupplier.phone) {
+      fieldsToUpdate.phone = phone;
+    }
+    if (email !== undefined && email !== existingSupplier.email) {
+      fieldsToUpdate.email = email;
     }
 
-    if (name) {
-      await existingCustomer.update({ name });
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(200).json({
+        message: "No hay cambios que realizar, los datos son los mismos.",
+      });
     }
 
-    if (address) {
-      await existingCustomer.update({ address });
-    }
-
-    if (city) {
-      await existingCustomer.update({ city });
-    }
-
-    if (phone) {
-      await existingCustomer.update({ phone });
-    }
-
-    if (email) {
-      await existingCustomer.update({ email });
-    }
+    await existingSupplier.update(fieldsToUpdate);
 
     return res
       .status(200)
-      .json({ message: `${name} fue actualizado con éxito` });
+      .json({ message: `${name || "El proveedor"} fue actualizado con éxito` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
