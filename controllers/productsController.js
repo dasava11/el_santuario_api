@@ -14,8 +14,18 @@ const createProduct = async (req, res) => {
     active,
   } = req.body;
   try {
-    if (!name || !unit_price || !code) {
-      return res.status(400).json({ message: "Falta informacion obligatoria" });
+    if (
+      !name ||
+      !unit_price ||
+      !code ||
+      !brand ||
+      !stock ||
+      !taxes_code ||
+      !active
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Falta dilienciar informacion obligatoria" });
     }
 
     await products.create({
@@ -77,8 +87,10 @@ const getProductByName = async (req, res) => {
   try {
     const { name } = req.query;
 
-    if (!name) {
-      return res.status(400).json({ message: "No se envio un nombre" });
+    if (!name || name.trim() === "") {
+      return res
+        .status(400)
+        .json({ message: "El nombre es requerido y no puede estar vacío." });
     }
 
     return res.status(200).json(productByName);
@@ -100,30 +112,41 @@ const editProduct = async (req, res) => {
     taxes_code,
     active,
   } = req.body;
+
   try {
     const existingProduct = await products.findByPk(id_products);
 
     if (!existingProduct) {
       return res.status(404).json({
-        message: `No se encontraron clientes con el id: ${id_products}`,
+        message: `No se encontró un producto con el id: ${id_products}`,
       });
     }
 
-    await existingProduct.update({
-      name,
-      description,
-      brand,
-      stock,
-      unit_price,
-      code,
-      taxes_code,
-      active,
+    const fieldsToUpdate = {};
+
+    if (name !== undefined) fieldsToUpdate.name = name;
+    if (description !== undefined) fieldsToUpdate.description = description;
+    if (brand !== undefined) fieldsToUpdate.brand = brand;
+    if (stock !== undefined) fieldsToUpdate.stock = stock;
+    if (unit_price !== undefined) fieldsToUpdate.unit_price = unit_price;
+    if (code !== undefined) fieldsToUpdate.code = code;
+    if (taxes_code !== undefined) fieldsToUpdate.taxes_code = taxes_code;
+    if (active !== undefined) fieldsToUpdate.active = active;
+
+    // Verificar si hay al menos un campo a actualizar
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(400).json({
+        message: "No se proporcionaron campos para actualizar",
+      });
+    }
+
+    await existingProduct.update(fieldsToUpdate);
+
+    return res.status(200).json({
+      message: `${name} fue actualizado con éxito`,
     });
-    return res
-      .status(200)
-      .json({ message: `$(name) fue actualizado con exito` });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
   }
 };
 

@@ -53,8 +53,6 @@ const createShopping = async (req, res) => {
     detailShoppingBody,
   } = req.body;
 
-  /*   const {id_detail_shopping, id_shoppings, id_products, count, unit_price, value_taxes, total} = req.body */
-
   try {
     const newShopping = await shopping.create({
       id_shopping,
@@ -67,7 +65,6 @@ const createShopping = async (req, res) => {
       total_sale,
     });
 
-    /*const detailShoppingData = await detailShoppingBody.map(e => ({id_detail_shopping: e.id_detail_shopping, id_shopping: newShopping.id_shopping, id_products: e.id_products, count: e.count, unit_price: e.unit_price, value_taxes: e.value_taxes, total: e.total })); */
     if (detailShoppingBody.length > 0) {
       for (let i = 0; i < detailShoppingBody.length; i++) {
         await detailShopping.create({

@@ -120,6 +120,7 @@ const createUser = async (req, res) => {
 const editUser = async (req, res) => {
   const { users } = db.models;
   const { id_user, username, password, email, type_user } = req.body;
+
   try {
     const existingUser = await users.findByPk(id_user);
 
@@ -129,25 +130,33 @@ const editUser = async (req, res) => {
       });
     }
 
-    if (username) {
-      await existingUser.update({ username });
+    const fieldsToUpdate = {};
+
+    if (username !== undefined && username !== existingUser.username) {
+      fieldsToUpdate.username = username;
+    }
+    if (password !== undefined) {
+      // Password generalmente no se compara por seguridad
+      fieldsToUpdate.password = password;
+    }
+    if (email !== undefined && email !== existingUser.email) {
+      fieldsToUpdate.email = email;
+    }
+    if (type_user !== undefined && type_user !== existingUser.type_user) {
+      fieldsToUpdate.type_user = type_user;
     }
 
-    if (password) {
-      await existingUser.update({ password });
+    if (Object.keys(fieldsToUpdate).length === 0) {
+      return res.status(200).json({
+        message: "No hay cambios que realizar, los datos son los mismos.",
+      });
     }
 
-    if (email) {
-      await existingUser.update({ email });
-    }
+    await existingUser.update(fieldsToUpdate);
 
-    if (type_user) {
-      await existingUser.update({ type_user });
-    }
-
-    return res
-      .status(200)
-      .json({ message: `${username} fue actualizado con éxito` });
+    return res.status(200).json({
+      message: `${username || "El usuario"} fue actualizado con éxito`,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
