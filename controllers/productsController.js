@@ -13,6 +13,7 @@ const createProduct = async (req, res) => {
     taxes_code,
     active,
   } = req.body;
+
   try {
     if (
       !name ||
@@ -26,6 +27,18 @@ const createProduct = async (req, res) => {
       return res
         .status(400)
         .json({ message: "Falta dilienciar informacion obligatoria" });
+    }
+
+    const existingProduct = await products.findOne({
+      where: {
+        name: {
+          [Op.like]: name,
+        },
+      },
+    });
+
+    if (existingProduct) {
+      return res.status(400).json({ message: `${name} ya existe` });
     }
 
     await products.create({
@@ -46,6 +59,7 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   const { products } = db.models;
+
   try {
     const allProducts = await products.findAll();
 
@@ -65,14 +79,16 @@ const getProductById = async (req, res) => {
   const { products } = db.models;
   try {
     const { id } = req.params;
+
     if (!id) {
       return res.status(400).json({ message: "No se envio un id" });
     }
+
     const productById = await products.findByPk(id);
 
     if (!productById) {
       return res
-        .status(400)
+        .status(404)
         .json({ message: `no se encontraron productos con el id: ${id}` });
     }
 
@@ -91,6 +107,20 @@ const getProductByName = async (req, res) => {
       return res
         .status(400)
         .json({ message: "El nombre es requerido y no puede estar vacío." });
+    }
+
+    const productByName = products.findAll({
+      where: {
+        name: {
+          [Op.like]: `%${name}%`,
+        },
+      },
+    });
+
+    if (productByName.length === 0) {
+      return res.status(404).json({
+        message: `No se encontraron productos con el nombre: ${name}`,
+      });
     }
 
     return res.status(200).json(productByName);
