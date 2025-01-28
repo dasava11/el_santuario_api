@@ -22,14 +22,14 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   const { users, shopping, userType } = db.models;
-  const { id } = req.params;
+  const { user_id } = req.params;
   try {
-    if (!id) {
+    if (!user_id) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
-    const userById = await users.findByPk(id, {
+    const userById = await users.findByPk(user_id, {
       include: [
         { model: shopping, as: "shoppings" },
         { model: userType, as: "type_user_user_type" },
@@ -39,7 +39,7 @@ const getUserById = async (req, res) => {
     if (!userById) {
       return res
         .status(404)
-        .json({ message: `No se encontraron usuarios con el id: ${id}` });
+        .json({ message: `No se encontraron usuarios con el id: ${user_id}` });
     }
 
     return res.status(200).json(userById);
@@ -49,10 +49,11 @@ const getUserById = async (req, res) => {
 };
 
 const getUserByName = async (req, res) => {
+  const { username } = req.query;
+  console.log(username)
   const { users, shopping, userType } = db.models;
-  const { name } = req.query;
   try {
-    if (!name || name.trim() === "") {
+    if (!username || username.trim() === "") {
       return res
         .status(400)
         .json({ message: "El nombre es requerido y no puede estar vacío." });
@@ -60,8 +61,8 @@ const getUserByName = async (req, res) => {
 
     const userByName = await users.findAll({
       where: {
-        name: {
-          [Op.like]: `%${name}%`,
+        username: {
+          [Op.like]: `%${username}%`,
         },
       },
       include: [
@@ -73,7 +74,7 @@ const getUserByName = async (req, res) => {
     if (userByName.length === 0) {
       return res
         .status(404)
-        .json({ message: `No se encontraron usuarios con el nombre: ${name}` });
+        .json({ message: `No se encontraron usuarios con el nombre: ${username}` });
     }
 
     return res.status(200).json(userByName);
@@ -84,14 +85,21 @@ const getUserByName = async (req, res) => {
 
 const createUser = async (req, res) => {
   const { users } = db.models;
-  const { id_user, username, password, email, type_user, active } = req.body;
+  const { username, password, email, type_user, active } = req.body;
   try {
-    if (id_user || username || password || email || type_user || active) {
+    if ( !username || !password || !email || type_user === undefined|| active === undefined) {
       return res.status(400).json({ message: "Falta información" });
     }
+
+    if (password.length < 8) {
+      return res.status(400).json({
+        message: "La contraseña debe tener al menos 8 caracteres",
+      });
+    }
+
     const existingUser = await users.findOne({
       where: {
-        name: {
+        username: {
           [Op.like]: username,
         },
       },
@@ -111,7 +119,7 @@ const createUser = async (req, res) => {
 
     return res
       .status(201)
-      .json({ message: `${username} fue creado con éxito!` });
+      .json({ message: `El usuario ${username} fue creado con éxito!` });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -119,14 +127,15 @@ const createUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const { users } = db.models;
-  const { id_user, username, password, email, type_user } = req.body;
+  const {user_id} = req.params
+  const { username, password, email, type_user } = req.body;
 
   try {
-    const existingUser = await users.findByPk(id_user);
+    const existingUser = await users.findByPk(user_id);
 
     if (!existingUser) {
       return res.status(404).json({
-        message: `No se encontraron usuarios con el id: ${id_user}`,
+        message: `No se encontraron usuarios con el id: ${user_id}`,
       });
     }
 
@@ -164,31 +173,32 @@ const editUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { users } = db.models;
-  const { id } = req.params;
+  const { user_id } = req.params;
   try {
-    if (!id) {
+    if (!user_id) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
-    const existingUser = await users.findByPk(id);
+    const existingUser = await users.findByPk(user_id);
 
     if (!existingUser) {
       return res
         .status(404)
-        .json({ message: `No se encontraron usuarios con el id: ${id}` });
+        .json({ message: `No se encontraron usuarios con el id: ${user_id}` });
     }
 
-    if (existingUser.active === true) {
-      await existingUser.update({ active: false });
+    const newActiveStatus = existingUser.active === true || existingUser.active === 1 ? false : true;
+
+    const updatedUser = await existingUser.update({ active: newActiveStatus });
+
+    if (updatedUser) {
       return res.status(200).json({
-        message: `${existingUser.name} fue desactivado exitosamente`,
+        message: `${existingUser.username} ha sido ${newActiveStatus ? 'activado' : 'desactivado'} exitosamente`,
       });
     } else {
-      await existingUser.update({ active: true });
-      return res
-        .status(200)
-        .json({ message: `${existingUser.name} fue activado exitosamente` });
+      return res.status(500).json({ message: 'No se pudo actualizar el estado del usuario' });
     }
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

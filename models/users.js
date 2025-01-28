@@ -22,7 +22,7 @@ export default function(sequelize, DataTypes) {
     },
     type_user: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'user_type',
         key: 'id_userType'
@@ -30,7 +30,7 @@ export default function(sequelize, DataTypes) {
     },
     active: {
       type: DataTypes.TINYINT(1),
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
