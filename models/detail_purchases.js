@@ -2,7 +2,8 @@ import Sequelize from 'sequelize';
 export default function(sequelize, DataTypes) {
   return sequelize.define('DetailPurchases', {
     id_detail_purchases: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true
     },

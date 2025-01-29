@@ -3,6 +3,7 @@ export default function(sequelize, DataTypes) {
   return sequelize.define('Suppliers', {
     id_suppliers: {
       type: DataTypes.INTEGER,
+      autoIncrement: true,
       allowNull: false,
       primaryKey: true
     },
@@ -32,7 +33,7 @@ export default function(sequelize, DataTypes) {
     },
     active: {
       type: DataTypes.TINYINT(1),
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,

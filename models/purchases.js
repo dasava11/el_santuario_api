@@ -2,13 +2,10 @@ import Sequelize from 'sequelize';
 export default function(sequelize, DataTypes) {
   return sequelize.define('Purchases', {
     id_purchases: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'suppliers',
-        key: 'id_suppliers'
-      }
+      primaryKey: true
     },
     date: {
       type: DataTypes.DATE(2),
@@ -24,7 +21,11 @@ export default function(sequelize, DataTypes) {
     },
     supplier: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'suppliers',
+        key: 'id_suppliers'
+      }
     },
     taxes: {
       type: DataTypes.INTEGER,
@@ -51,6 +52,17 @@ export default function(sequelize, DataTypes) {
           { name: "id_purchases" },
         ]
       },
+      {
+        name: "fk_id_supplier_idx",
+        using: "BTREE",
+        fields: [
+          { name: "supplier" },
+        ]
+      },
     ]
   });
 };
+
+
+
+

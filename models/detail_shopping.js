@@ -2,8 +2,8 @@ import Sequelize from 'sequelize';
 export default function(sequelize, DataTypes) {
   return sequelize.define('DetailShopping', {
     id_detail_shopping: {
-      autoIncrement: true,
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true
     },

@@ -6,8 +6,8 @@ const createSuppliers = async (req, res) => {
   const { nit, name, address, city, phone, email, active } = req.body;
 
   try {
-    if (!name || !nit || address || phone || city || active === undefined) {
-      return res.status(400).json({ message: "Falta información" });
+    if (!name || !nit || !address || !phone || !city || active === undefined) {
+      return res.status(400).json({ message: "Falta información requerida" });
     }
 
     const existingSupplier = await suppliers.findOne({
@@ -44,7 +44,7 @@ const getAllSuppliers = async (req, res) => {
   const { suppliers, purchases } = db.models;
   try {
     const allSuppliers = await suppliers.findAll({
-      include: [{ model: purchases, as: "purchase" }],
+      include: [{ model: purchases, as: "purchases" }],
     });
 
     if (allSuppliers.length === 0) {
@@ -113,14 +113,15 @@ const getSuppliersByName = async (req, res) => {
 
 const editSuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const { id_suppliers, nit, name, address, city, phone, email } = req.body;
+  const {supplier_id} = req.params
+  const { nit, name, address, city, phone, email } = req.body;
 
   try {
-    const existingSupplier = await suppliers.findByPk(id_suppliers);
+    const existingSupplier = await suppliers.findByPk(supplier_id);
 
     if (!existingSupplier) {
       return res.status(404).json({
-        message: `No se encontraron proveedores con el id: ${id_suppliers}`,
+        message: `No se encontraron proveedores con el id: ${supplier_id}`,
       });
     }
 
@@ -197,19 +198,19 @@ const deleteSuppliers = async (req, res) => {
 
 const destroySuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const { id } = req.params;
+  const { supplier_id } = req.params;
   try {
-    if (!id) {
+    if (!supplier_id) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
 
-    if (isNaN(id)) {
+    if (isNaN(supplier_id)) {
       return res.status(400).json({ message: "Id invalido" });
     }
 
-    const response = await suppliers.findByPk(id);
+    const response = await suppliers.findByPk(supplier_id);
     await response.destroy();
     return res
       .status(200)
