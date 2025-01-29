@@ -15,18 +15,11 @@ const createProduct = async (req, res) => {
   } = req.body;
 
   try {
-    if (
-      !name ||
-      !unit_price ||
-      !code ||
-      !brand ||
-      !stock ||
-      !taxes_code ||
-      !active
+    if (!name || unit_price === undefined || !code || !brand || stock === undefined || taxes_code === undefined
     ) {
       return res
         .status(400)
-        .json({ message: "Falta dilienciar informacion obligatoria" });
+        .json({ message: "Falta diligenciar informacion obligatoria" });
     }
 
     const existingProduct = await products.findOne({
@@ -131,8 +124,8 @@ const getProductByName = async (req, res) => {
 
 const editProduct = async (req, res) => {
   const { products } = db.models;
+  const {product_id} = req.params
   const {
-    id_products,
     name,
     description,
     brand,
@@ -144,11 +137,11 @@ const editProduct = async (req, res) => {
   } = req.body;
 
   try {
-    const existingProduct = await products.findByPk(id_products);
+    const existingProduct = await products.findByPk(product_id);
 
     if (!existingProduct) {
       return res.status(404).json({
-        message: `No se encontró un producto con el id: ${id_products}`,
+        message: `No se encontró un producto con el id: ${product_id}`,
       });
     }
 
