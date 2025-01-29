@@ -31,12 +31,14 @@ function initModels() {
   purchases.hasMany(detailPurchases, { as: "detail_purchases", foreignKey: "id_purchase"});
   detailShopping.belongsTo(shopping, { as: "id_shopping_shopping", foreignKey: "id_shopping"});
   shopping.hasMany(detailShopping, { as: "detail_shoppings", foreignKey: "id_shopping"});
-  purchases.belongsTo(suppliers, { as: "id_purchases_supplier", foreignKey: "id_purchases"});
-  suppliers.hasOne(purchases, { as: "purchase", foreignKey: "id_purchases"});
+  purchases.belongsTo(suppliers, { as: "supplier_supplier", foreignKey: "supplier" });
+  suppliers.hasMany(purchases, { as: "purchases", foreignKey: "supplier" });
   users.belongsTo(userType, { as: "type_user_user_type", foreignKey: "type_user"});
   userType.hasMany(users, { as: "users", foreignKey: "type_user"});
   shopping.belongsTo(users, { as: "user", foreignKey: "userId"});
   users.hasMany(shopping, { as: "shoppings", foreignKey: "userId"});
+
+
 
   return {
     customers,
