@@ -8,8 +8,9 @@ export default function(sequelize, DataTypes) {
       primaryKey: true
     },
     date: {
-      type: DataTypes.DATE(2),
-      allowNull: true
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     count: {
       type: DataTypes.INTEGER,

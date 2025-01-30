@@ -4,7 +4,7 @@ import { getAllPurchases, getPurchasesById, createPurchases, editPurchases, dest
  const router = express.Router()
 
 router.get('/',getAllPurchases) 
-router.get('/:purchase_id',getPurchasesById)
+router.get('/byid/:purchase_id',getPurchasesById)
 router.post('/',createPurchases)
 router.put('/:purchase_id',editPurchases)
 router.delete('/destroy/:purchase_id',destroyPurchases)

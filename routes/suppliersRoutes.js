@@ -12,7 +12,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAllSuppliers);
-router.get("/:supplier_id", getSuppliersById);
+router.get("/byid/:supplier_id", getSuppliersById);
 router.get("/name/", getSuppliersByName);
 router.post("/", createSuppliers);
 router.put("/:supplier_id", editSuppliers);

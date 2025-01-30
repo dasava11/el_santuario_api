@@ -59,19 +59,19 @@ const getAllSuppliers = async (req, res) => {
 
 const getSuppliersById = async (req, res) => {
   const { suppliers, purchases } = db.models;
-  const { id } = req.params;
+  const { supplier_id } = req.params;
   try {
-    if (!id) {
+    if (!supplier_id) {
       return res.status(400).json({ message: "No se envió un id" });
     }
-    const supplierById = await suppliers.findByPk(id, {
-      include: [{ model: purchases, as: "purchase" }],
+    const supplierById = await suppliers.findByPk(supplier_id, {
+      include: [{ model: purchases, as: "purchases" }],
     });
 
     if (!supplierById) {
       return res
         .status(404)
-        .json({ message: `No se encontraron proveedores con el id: ${id}` });
+        .json({ message: `No se encontraron proveedores con el id: ${supplier_id}` });
     }
 
     return res.status(200).json(supplierById);

@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAllProducts);
-router.get("/:product_id", getProductById);
+router.get("/byid/:product_id", getProductById);
 router.get("/name/", getProductByName);
 router.post("/", createProduct);
 router.put("/:product_id", editProduct);
