@@ -37,12 +37,11 @@ const getPurchasesById = async (req, res) => {
 
 // Crear una nueva compra
 const createPurchases = async (req, res) => {
-  const { detailPurchases } = db.models;
+  const { purchases, detailPurchases } = db.models;
   const {
-    id_purchase,
     date,
-    count,
-    unit_price,
+    count, // Es un contador que referencia la cantidad de productos que le compré a un proveedor
+    price,
     supplier,
     taxes,
     subtotal,
@@ -52,20 +51,24 @@ const createPurchases = async (req, res) => {
 
   try {
     const newPurchase = await purchases.create({
-      id_purchase,
       date,
       count,
-      unit_price,
+      price,
       supplier,
       taxes,
       subtotal,
       total_price,
     });
+
+    if (!newPurchase.id_purchases) {
+      throw new Error("No se pudo obtener el ID de la compra");
+    }
+
     if (detailPurchasesBody.length > 0) {
       for (let i = 0; i < detailPurchasesBody.length; i++) {
         await detailPurchases.create({
           id_detail_purchases: detailPurchasesBody[i].id_detail_purchases,
-          id_purchase: newPurchase.id_purchase,
+          id_purchases: newPurchase.id_purchases,
           id_products: detailPurchasesBody[i].id_products,
           count: detailPurchasesBody[i].count,
           unit_price: detailPurchasesBody[i].unit_price,

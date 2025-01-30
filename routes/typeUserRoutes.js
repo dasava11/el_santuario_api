@@ -4,7 +4,7 @@ import { createTypeUser, getAllTypeUsers, getTypeUserById, getTypeUserByName, ed
 const router = express.Router();
 
 router.get("/", getAllTypeUsers);
-router.get("/:id_userType", getTypeUserById);
+router.get("/byid/:id_userType", getTypeUserById);
 router.get("/rol/", getTypeUserByName);
 router.post("/", createTypeUser);
 router.put("/:typeUser_id", editTypeUser);

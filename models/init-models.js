@@ -27,8 +27,8 @@ function initModels() {
   products.hasMany(detailPurchases, { as: "detail_purchases", foreignKey: "id_products"});
   detailShopping.belongsTo(products, { as: "id_products_product", foreignKey: "id_products"});
   products.hasMany(detailShopping, { as: "detail_shoppings", foreignKey: "id_products"});
-  detailPurchases.belongsTo(purchases, { as: "id_purchase_purchase", foreignKey: "id_purchase"});
-  purchases.hasMany(detailPurchases, { as: "detail_purchases", foreignKey: "id_purchase"});
+  detailPurchases.belongsTo(purchases, { as: "id_purchase_purchase", foreignKey: "id_purchases"});
+  purchases.hasMany(detailPurchases, { as: "detail_purchases", foreignKey: "id_purchases"});
   detailShopping.belongsTo(shopping, { as: "id_shopping_shopping", foreignKey: "id_shopping"});
   shopping.hasMany(detailShopping, { as: "detail_shoppings", foreignKey: "id_shopping"});
   purchases.belongsTo(suppliers, { as: "supplier_supplier", foreignKey: "supplier" });

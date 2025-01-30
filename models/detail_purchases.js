@@ -7,7 +7,7 @@ export default function(sequelize, DataTypes) {
       allowNull: false,
       primaryKey: true
     },
-    id_purchase: {
+    id_purchases: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -17,7 +17,7 @@ export default function(sequelize, DataTypes) {
     },
     id_products: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'products',
         key: 'id_products'
@@ -25,19 +25,19 @@ export default function(sequelize, DataTypes) {
     },
     count: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     unit_price: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     value_taxes: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     total: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
@@ -56,7 +56,7 @@ export default function(sequelize, DataTypes) {
         name: "fk_id_purchases_idx",
         using: "BTREE",
         fields: [
-          { name: "id_purchase" },
+          { name: "id_purchases" },
         ]
       },
       {
