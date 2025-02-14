@@ -164,29 +164,29 @@ const editSuppliers = async (req, res) => {
 
 const deleteSuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const { id } = req.params;
+  const { supplier_id } = req.params;
   try {
-    if (!id) {
+    if (!supplier_id) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
 
-    const existingSupplier = await suppliers.findByPk(id);
+    const existingSupplier = await suppliers.findByPk(supplier_id);
 
     if (!existingSupplier) {
       return res
         .status(404)
-        .json({ message: `No se encontraron proveedores con el id: ${id}` });
+        .json({ message: `No se encontraron proveedores con el id: ${supplier_id}` });
     }
 
-    if (existingSupplier.active === true) {
-      await existingSupplier.update({ active: false });
+    if (existingSupplier.active === 1) {
+      await existingSupplier.update({ active: 0 });
       return res.status(200).json({
         message: `${existingSupplier.name} fue desactivado exitosamente`,
       });
     } else {
-      await existingSupplier.update({ active: true });
+      await existingSupplier.update({ active: 1 });
       return res.status(200).json({
         message: `${existingSupplier.name} fue activado exitosamente`,
       });
