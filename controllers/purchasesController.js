@@ -1,5 +1,4 @@
-import { success, error } from "../red/answers.js";
-import { Sequelize, Op } from "sequelize";
+import { Op } from "sequelize";
 import db from "../models/index.js";
 
 const { purchases, detailPurchases } = db.models;
@@ -37,55 +36,84 @@ const getPurchasesById = async (req, res) => {
 
 // Crear una nueva compra
 const createPurchases = async (req, res) => {
-  const { purchases, detailPurchases } = db.models;
-  const {
-    date,
-    count, // Es un contador que referencia la cantidad de productos que le compré a un proveedor
-    price,
-    supplier,
-    taxes,
-    subtotal,
-    total_price,
-    detailPurchasesBody,
-  } = req.body;
+  const { purchases, detailPurchases, products } = db.models;
+  const { date, supplier, detailPurchasesBody } = req.body;
+
+  const transaction = await db.sequelize.transaction();
 
   try {
+    if (!detailPurchasesBody || detailPurchasesBody.length === 0) {
+      return res.status(400).json({ error: "Debe agregar al menos un producto en la compra." });
+    }
+
+    // Verificar si todos los productos existen antes de continuar
+    const productIds = detailPurchasesBody.map((item) => item.id_products);
+    const existingProducts = await products.findAll({ where: { id_products: productIds },
+      transaction });
+
+    if (existingProducts.length !== productIds.length) {
+      await transaction.rollback()
+      return res.status(400).json({ error: "Uno o más productos no existen. Verifique los productos antes de realizar la compra." });
+    }
+
+    let price = 0;
+    let taxes = 0;
+
+    for (let item of detailPurchasesBody) {
+      price += item.unit_price * item.count;
+      taxes += ((item.value_taxes / 100) * item.unit_price) * item.count; 
+    }
+
+    const total_price = price + taxes;
+
+    // Crear la compra
     const newPurchase = await purchases.create({
       date,
-      count,
+      count: detailPurchasesBody.length,
       price,
       supplier,
       taxes,
-      subtotal,
+      subtotal: price,
       total_price,
-    });
+    },
+    { transaction }
+  );
 
     if (!newPurchase.id_purchases) {
-      throw new Error("No se pudo obtener el ID de la compra");
+      throw new Error("No se pudo obtener el ID de la compra.");
     }
 
-    if (detailPurchasesBody.length > 0) {
-      for (let i = 0; i < detailPurchasesBody.length; i++) {
-        await detailPurchases.create({
-          id_detail_purchases: detailPurchasesBody[i].id_detail_purchases,
-          id_purchases: newPurchase.id_purchases,
-          id_products: detailPurchasesBody[i].id_products,
-          count: detailPurchasesBody[i].count,
-          unit_price: detailPurchasesBody[i].unit_price,
-          value_taxes: detailPurchasesBody[i].value_taxes,
-          total: detailPurchasesBody[i].total,
-        });
-      }
+    // Crear detalles de la compra y actualizar stock en una sola transacción
+    const purchaseDetails = detailPurchasesBody.map((item) => ({
+      id_purchases: newPurchase.id_purchases,
+      id_products: item.id_products,
+      count: item.count,
+      unit_price: item.unit_price,
+      value_taxes: item.value_taxes,
+      total: (item.unit_price + (item.unit_price * item.value_taxes) / 100) * item.count,
+    }));
+
+    await detailPurchases.bulkCreate(purchaseDetails, { transaction });
+
+    // Actualizar stock de productos en la BD
+    for (const product of existingProducts) {
+      const purchasedItem = detailPurchasesBody.find((item) => item.id_products === product.id_products);
+      product.stock += purchasedItem.count;
+      await product.save({ transaction });
     }
+
+    await transaction.commit()
 
     res.status(201).json({
-      message: "Compra al proveedor generada con exito.",
+      message: "Compra al proveedor generada con éxito. Stock actualizado.",
       purchase: newPurchase,
     });
   } catch (error) {
+    await transaction.rollback();
     res.status(500).json({ error: error.message });
   }
 };
+
 
 // Actualizar una compra existente
 const editPurchases = async (req, res) => {

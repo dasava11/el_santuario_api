@@ -170,13 +170,13 @@ const deleteCustomer = async (req, res) => {
         .json({ message: `No se encontraron clientes con el id: ${id}` });
     }
 
-    if (existingCustomer.active === true) {
-      await existingClient.update({ active: false });
+    if (existingCustomer.active === 1) {
+      await existingClient.update({ active: 0 });
       return res.status(200).json({
         message: `${existingCustomer.name} fue desactivado exitosamente`,
       });
     } else {
-      await existingCustomer.update({ active: true });
+      await existingCustomer.update({ active: 1 });
       return res.status(200).json({
         message: `${existingCustomer.name} fue activado exitosamente`,
       });
