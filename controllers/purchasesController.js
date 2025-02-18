@@ -79,10 +79,6 @@ const createPurchases = async (req, res) => {
     { transaction }
   );
 
-    if (!newPurchase.id_purchases) {
-      throw new Error("No se pudo obtener el ID de la compra.");
-    }
-
     // Crear detalles de la compra y actualizar stock en una sola transacción
     const purchaseDetails = detailPurchasesBody.map((item) => ({
       id_purchases: newPurchase.id_purchases,

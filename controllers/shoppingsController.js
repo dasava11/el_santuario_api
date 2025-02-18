@@ -1,4 +1,4 @@
-import { Sequelize, Op, Transaction } from "sequelize";
+import { Sequelize, Op} from "sequelize";
 import db from "../models/index.js";
 
 // Obtener todos los registros de compras
@@ -39,48 +39,94 @@ const getShoppingById = async (req, res) => {
 
 // Crear una nueva compra
 const createShopping = async (req, res) => {
-  const { shopping, detailShopping } = db.models;
+  const { shopping, detailShopping, products } = db.models;
 
   const {
-    id_shopping,
     date,
     userId,
     customer,
     payment_method,
-    taxes,
-    subtotal,
-    total_sale,
     detailShoppingBody,
   } = req.body;
 
+  const transaction = await db.sequelize.transaction();
+  
   try {
+
+    if (!userId || isNaN(userId) || userId <= 0) {
+      return res.status(400).json({ error: "Debe asociar un cajero válido para generar la venta" });
+    }
+
+    // Verificación si el userId existe en la base de datos
+    const existingUser = await db.models.users.findByPk(userId);
+    if (!existingUser) {
+      return res.status(400).json({ error: "El cajero indicado no existe" });
+    }
+  
+    if (!detailShoppingBody || detailShoppingBody.length === 0) {
+      return res.status(400).json({error: "Debe agregar al menos un producto al carrito de compras"})
+    };
+
+    const productIds = detailShoppingBody.map((item) => item.id_products);
+    const existingProducts = await products.findAll({ where: { id_products: productIds },
+      transaction });
+
+    if (existingProducts.length !== productIds.length) {
+      await transaction.rollback()
+      return res.status(400).json({ error: "Uno o más productos no existen. Verifique los productos que se están facturando." });
+    }
+
+    let subtotal = 0;
+    let taxes = 0;
+
+    for (let item of detailShoppingBody) {
+      subtotal += item.unit_price * item.count;
+      taxes += ((item.value_taxes / 100) * item.unit_price) * item.count; 
+    }
+
+    const total_sale = taxes + subtotal;
+
     const newShopping = await shopping.create({
-      id_shopping,
       date,
       userId,
       customer,
       payment_method,
       taxes,
       subtotal,
-      total_sale,
-    });
+      total_sale ,
+    }, {transaction});
 
-    if (detailShoppingBody.length > 0) {
-      for (let i = 0; i < detailShoppingBody.length; i++) {
-        await detailShopping.create({
-          id_detail_shopping: detailShoppingBody[i].id_detail_shopping,
-          id_shopping: newShopping.id_shopping,
-          id_products: detailShoppingBody[i].id_products,
-          count: detailShoppingBody[i].count,
-          unit_price: detailShoppingBody[i].unit_price,
-          value_taxes: detailShoppingBody[i].value_taxes,
-          total: detailShoppingBody[i].total,
-        });
-      }
-    }
-    console.log("se creo la compra");
-    res.status(201).json(newShopping);
+    const shoppingDetails = detailShoppingBody.map((item) => ({
+      id_shopping: newShopping.id_shopping,
+      id_products: item.id_products,
+      count: item.count,
+      unit_price: item.unit_price,
+      value_taxes: item.value_taxes,
+      total: (item.unit_price + (item.unit_price * item.value_taxes) / 100) * item.count
+    }));
+    
+    await detailShopping.bulkCreate(shoppingDetails, {transaction});
+    
+    for (const product of existingProducts) {
+      const shoppingItem = detailShoppingBody.find((item)=> item.id_products === product.id_products);
+
+      if (product.stock < shoppingItem.count) {
+        await transaction.rollback();
+        return res.status(400).json({ error: `Stock insuficiente para el producto ${product.id_products}` });
+      };
+      product.stock -= shoppingItem.count;
+      await product.save({transaction});
+    };
+
+    await transaction.commit()
+
+    console.log("Se genero la compra con exito");
+    res.status(201).json( {
+      message: `Se genero la compra con exito. Cobrar ${newShopping.total_sale} Stock actualizado.`,
+      shopping: newShopping,
+    });
   } catch (error) {
+    await transaction.rollback();
     res.status(500).json({ error: error.message });
   }
 };

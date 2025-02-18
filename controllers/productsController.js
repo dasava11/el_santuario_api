@@ -34,6 +34,28 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ message: `${name} ya existe` });
     }
 
+    const existingProductByCode = await products.findOne({
+      where: {
+        code,
+      },
+    });
+    
+    if (existingProductByCode) {
+      return res.status(400).json({ message: `El código ${code} ya existe` });
+    }
+
+    if (unit_price <= 0 || isNaN(unit_price)) {
+      return res.status(400).json({ message: "El precio debe ser un número positivo" });
+    }
+
+    if (stock < 0 || !Number.isInteger(stock)) {
+      return res.status(400).json({ message: "El stock debe ser un número entero positivo" });
+    }
+
+    if (stock === 0 && active === true) {
+      return res.status(400).json({ message: "El estado del producto no puede ser activo debido a que no hay existencias en su inventario" });
+    }
+
     await products.create({
       name,
       description,
@@ -147,27 +169,49 @@ const editProduct = async (req, res) => {
 
     const fieldsToUpdate = {};
 
-    if (name !== undefined) fieldsToUpdate.name = name;
-    if (description !== undefined) fieldsToUpdate.description = description;
-    if (brand !== undefined) fieldsToUpdate.brand = brand;
-    if (stock !== undefined) fieldsToUpdate.stock = stock;
-    if (unit_price !== undefined) fieldsToUpdate.unit_price = unit_price;
-    if (code !== undefined) fieldsToUpdate.code = code;
-    if (taxes_code !== undefined) fieldsToUpdate.taxes_code = taxes_code;
-    if (active !== undefined) fieldsToUpdate.active = active;
-
+    if (name !== undefined) fieldsToUpdate.name = name.trim(); 
+    if (description !== undefined) fieldsToUpdate.description = description.trim();
+    if (brand !== undefined) fieldsToUpdate.brand = brand.trim();
+  
+    if (stock !== undefined) {
+      if (stock < 0 || !Number.isInteger(stock)) {
+        return res.status(400).json({ message: "El stock debe ser un número entero positivo" });
+      }
+      fieldsToUpdate.stock = stock;
+    }
+  
+    if (unit_price !== undefined) {
+      if (unit_price <= 0 || isNaN(unit_price)) {
+        return res.status(400).json({ message: "El precio debe ser un número positivo" });
+      }
+      fieldsToUpdate.unit_price = unit_price;
+    }
+  
+    if (code !== undefined) fieldsToUpdate.code = code.trim();
+    if (taxes_code !== undefined) fieldsToUpdate.taxes_code = taxes_code.trim();
+  
+    // Validación para 'active' si se proporciona
+    if (active !== undefined) {
+      if (typeof active !== "boolean") {
+        return res.status(400).json({ message: "El campo 'active' debe ser un valor booleano" });
+      }
+      fieldsToUpdate.active = active;
+    }
+  
     // Verificar si hay al menos un campo a actualizar
     if (Object.keys(fieldsToUpdate).length === 0) {
       return res.status(400).json({
         message: "No se proporcionaron campos para actualizar",
       });
     }
-
+  
+    // Actualizar el producto
     await existingProduct.update(fieldsToUpdate);
-
+  
     return res.status(200).json({
-      message: `${name} fue actualizado con éxito`,
+      message: `${name || "El producto"} fue actualizado con éxito`,
     });
+  
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -175,14 +219,14 @@ const editProduct = async (req, res) => {
 
 const toggleProductStatus = async (req, res) => {
   const { products } = db.models;
-  const { id } = req.params;
+  const { product_id } = req.params;
   try {
-    const existingProduct = await products.findByPk(id);
+    const existingProduct = await products.findByPk(product_id);
 
     if (!existingProduct) {
       return res
         .status(404)
-        .json({ message: `No se encontró el producto con el id: ${id}` });
+        .json({ message: `No se encontró el producto con el id: ${product_id}` });
     }
 
     const newStatus = !existingProduct.active;

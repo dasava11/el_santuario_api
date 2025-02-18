@@ -84,7 +84,7 @@ const getUserByName = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { users } = db.models;
+  const { users, userType } = db.models;
   const { username, password, email, type_user, active } = req.body;
   try {
     if ( !username || !password || !email || type_user === undefined|| active === undefined) {
@@ -100,13 +100,25 @@ const createUser = async (req, res) => {
     const existingUser = await users.findOne({
       where: {
         username: {
-          [Op.like]: username,
+          [Op.like]: `%${username}%`,
         },
       },
     });
 
     if (existingUser) {
       return res.status(400).json({ message: `${username} ya existe` });
+    }
+
+    const userTypeData = await userType.findOne({
+      where: { id_userType: type_user },
+    });
+
+    if (!userTypeData) {
+      return res.status(400).json({ message: `El tipo de usuario con ID ${type_user} no existe` });
+    }
+
+    if (userTypeData.active === 0) {
+      return res.status(400).json({ message: `El tipo de usuario ${userTypeData.rol} está desactivado y no puede ser asignado` });
     }
 
     await users.create({
@@ -141,18 +153,20 @@ const editUser = async (req, res) => {
 
     const fieldsToUpdate = {};
 
-    if (username !== undefined && username !== existingUser.username) {
-      fieldsToUpdate.username = username;
+    if (username !== undefined && username.trim() !== existingUser.username.trim()) {
+      fieldsToUpdate.username = username.trim();
     }
-    if (password !== undefined) {
-      // Password generalmente no se compara por seguridad
-      fieldsToUpdate.password = password;
+
+    if (password !== undefined && password.trim() !== "") {
+      fieldsToUpdate.password = password; // Se podría hashear aquí antes de guardar
     }
-    if (email !== undefined && email !== existingUser.email) {
-      fieldsToUpdate.email = email;
+
+    if (email !== undefined && email.trim() !== existingUser.email.trim()) {
+      fieldsToUpdate.email = email.trim();
     }
-    if (type_user !== undefined && type_user !== existingUser.type_user) {
-      fieldsToUpdate.type_user = type_user;
+
+    if (type_user !== undefined && parseInt(type_user) !== parseInt(existingUser.type_user)) {
+      fieldsToUpdate.type_user = parseInt(type_user);
     }
 
     if (Object.keys(fieldsToUpdate).length === 0) {
