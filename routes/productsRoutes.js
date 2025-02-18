@@ -15,6 +15,6 @@ router.get("/byid/:product_id", getProductById);
 router.get("/name/", getProductByName);
 router.post("/", createProduct);
 router.put("/:product_id", editProduct);
-router.delete("/:product_id", toggleProductStatus);
+router.delete("/delete/:product_id", toggleProductStatus);
 
 export default router;

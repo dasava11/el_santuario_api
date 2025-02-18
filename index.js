@@ -8,8 +8,16 @@ const app = express();
 // Conexión a la base de datos
 try {
   await db.sequelize.authenticate(); // Usar la instancia de Sequelize
-  await db.sequelize.sync(); // Sincronizar modelos
   console.log('Conexión correcta a la base de datos');
+
+  if (process.env.FORCE_DB_RESET === "true") {
+    await db.sequelize.sync({ force: true });
+    console.log('⚠️ Base de datos reiniciada con éxito.');
+  } else {
+    await db.sequelize.sync();
+    console.log('📌 Base de datos sincronizada sin eliminar datos.');
+  }
+
 } catch (error) {
   console.error('Error conectando a la base de datos:', error);
 }

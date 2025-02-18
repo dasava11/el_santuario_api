@@ -124,18 +124,25 @@ const editCustomer = async (req, res) => {
 
     const fieldsToUpdate = {};
 
-    if (name !== undefined && name !== existingCustomer.name) {
-      fieldsToUpdate.name = name;
+    if (name?.trim() && name.trim() !== existingCustomer.name.trim()) {
+      fieldsToUpdate.name = name.trim();
     }
-    if (document !== undefined && document !== existingCustomer.document) {
+    if (
+      document !== undefined &&
+      String(document).trim() !== String(existingCustomer.document).trim()
+    ) {
       fieldsToUpdate.document = document;
     }
-    if (phone !== undefined && phone !== existingCustomer.phone) {
+    if (
+      phone !== undefined &&
+      String(phone).trim() !== String(existingCustomer.phone).trim()
+    ) {
       fieldsToUpdate.phone = phone;
     }
-    if (email !== undefined && email !== existingCustomer.email) {
-      fieldsToUpdate.email = email;
+    if (email?.trim() && email.trim() !== existingCustomer.email.trim()) {
+      fieldsToUpdate.email = email.trim();
     }
+
 
     if (Object.keys(fieldsToUpdate).length === 0) {
       return res.status(200).json({
