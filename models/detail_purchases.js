@@ -28,7 +28,7 @@ export default function(sequelize, DataTypes) {
       allowNull: false
     },
     unit_price: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.DECIMAL(14, 4),
       allowNull: false
     },
     value_taxes: {
