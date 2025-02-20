@@ -102,6 +102,8 @@ const createShopping = async (req, res) => {
       count: item.count,
       unit_price: item.unit_price,
       value_taxes: item.value_taxes,
+      buy_price:item.buy_price,
+      code_earn:item.code_earn,
       total: (item.unit_price + (item.unit_price * item.value_taxes) / 100) * item.count
     }));
     
