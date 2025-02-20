@@ -1,12 +1,13 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('detail_purchases', {
+import Sequelize from 'sequelize';
+export default function(sequelize, DataTypes) {
+  return sequelize.define('DetailPurchases', {
     id_detail_purchases: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
       allowNull: false,
       primaryKey: true
     },
-    id_purchase: {
+    id_purchases: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -16,7 +17,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     id_products: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'products',
         key: 'id_products'
@@ -24,19 +25,19 @@ module.exports = function(sequelize, DataTypes) {
     },
     count: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     unit_price: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     value_taxes: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     },
     total: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,
@@ -55,7 +56,7 @@ module.exports = function(sequelize, DataTypes) {
         name: "fk_id_purchases_idx",
         using: "BTREE",
         fields: [
-          { name: "id_purchase" },
+          { name: "id_purchases" },
         ]
       },
       {

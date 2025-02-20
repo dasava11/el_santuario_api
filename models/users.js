@@ -1,8 +1,7 @@
-import db from '../config/db';
-const Sequelize = require('sequelize');
+import Sequelize from 'sequelize';
 
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('users', {
+export default function(sequelize, DataTypes) {
+  return sequelize.define('Users', {
     id_user: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -23,7 +22,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     type_user: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: 'user_type',
         key: 'id_userType'
@@ -31,7 +30,7 @@ module.exports = function(sequelize, DataTypes) {
     },
     active: {
       type: DataTypes.TINYINT(1),
-      allowNull: true
+      allowNull: false
     }
   }, {
     sequelize,

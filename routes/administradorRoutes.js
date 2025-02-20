@@ -1,14 +1,22 @@
-import express from "express"
-import { crear, consultar, editar } from '../controllers/administradorController.js'
+import express from "express";
+import {
+  getUserById,
+  getAllUsers,
+  createUser,
+  deleteUser,
+  destroyUser,
+  editUser,
+  getUserByName,
+} from "../controllers/administradorController.js";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/crear', crear)
+router.get("/", getAllUsers);
+router.get("/byid/:user_id", getUserById);
+router.get("/name/", getUserByName);
+router.post("/", createUser);
+router.put("/:user_id", editUser);
+router.delete("/delete/:user_id", deleteUser);
+router.delete("/destroy/:user_id", destroyUser);
 
-router.get('/consultar', consultar)
-
-router.get('/editar', editar)
-
-
-
-export default router
+export default router;

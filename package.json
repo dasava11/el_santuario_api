@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node ./index.js",
     "server": "nodemon index.js",
-    "sequelize": "sequelize"
+    "sequelize": "sequelize",
+    "migrate": "npx sequelize-cli db:migrate",
+    "seed": "npx sequelize-cli db:seed:all"
   },
   "keywords": [
     "MVC",
@@ -18,6 +20,7 @@
   "author": "David Sanchez",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
     "pug": "^3.0.3"

@@ -1,18 +1,16 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('purchases', {
+import Sequelize from 'sequelize';
+export default function(sequelize, DataTypes) {
+  return sequelize.define('Purchases', {
     id_purchases: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
-      primaryKey: true,
-      references: {
-        model: 'suppliers',
-        key: 'id_suppliers'
-      }
+      primaryKey: true
     },
     date: {
-      type: DataTypes.DATE(2),
-      allowNull: true
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     count: {
       type: DataTypes.INTEGER,
@@ -24,7 +22,11 @@ module.exports = function(sequelize, DataTypes) {
     },
     supplier: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: true,
+      references: {
+        model: 'suppliers',
+        key: 'id_suppliers'
+      }
     },
     taxes: {
       type: DataTypes.INTEGER,
@@ -51,6 +53,17 @@ module.exports = function(sequelize, DataTypes) {
           { name: "id_purchases" },
         ]
       },
+      {
+        name: "fk_id_supplier_idx",
+        using: "BTREE",
+        fields: [
+          { name: "supplier" },
+        ]
+      },
     ]
   });
 };
+
+
+
+
