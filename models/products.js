@@ -23,9 +23,17 @@ export default function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    unit_price: {
+    buy_price: {
+      type: DataTypes.DECIMAL(14, 4),
+      allowNull: false
+    },
+    code_earn: {
       type: DataTypes.INTEGER,
-      allowNull: true
+      allowNull: false
+    },
+    unit_price: {
+      type: DataTypes.DECIMAL(14, 4),
+      allowNull: false
     },
     code: {
       type: DataTypes.STRING(200),
