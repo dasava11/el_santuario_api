@@ -1,6 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import db from "../models/index.js";
 
+
 const createProduct = async (req, res) => {
   const { products } = db.models;
   const {
@@ -144,6 +145,37 @@ const getProductByName = async (req, res) => {
   }
 };
 
+const getProductByCode = async (req,res) => {
+  const { products } = db.models;
+  const { code } = req.params;
+  try {
+    if (!code || code.trim() === ""){
+      return res
+      .status(400)
+      .json ({ message: "El codigo es requerido, no puede estar vacio"});
+    }
+
+    const productByCode = await products.findOne({
+      where: {
+        code: {
+          [Op.like]: `%${code}%`,
+        },
+      },
+      // include: [{ model:detail_purchases, as: "detailpurchase"}, { model:detail_shopping, as: "detailshopping"}],
+    });
+
+    if (productByCode.length === 0){
+      return res.status(404).json({
+        message:`No se encontraron productos con el codigo: ${code}`,
+      });
+    }
+    return res.status(200).json(productByCode);
+}catch (error){
+  res.status(500).json({error: error.message});
+}
+};
+
+ 
 const editProduct = async (req, res) => {
   const { products } = db.models;
   const {product_id} = req.params
@@ -247,6 +279,7 @@ export {
   getAllProducts,
   getProductById,
   getProductByName,
+  getProductByCode,
   editProduct,
   toggleProductStatus,
 };
