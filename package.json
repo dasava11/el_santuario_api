@@ -5,8 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "netlify deploy --prod",
-    "start": "node ./functions/index.js",
+    "start": "node index.js",
     "server": "nodemon index.js",
     "sequelize": "sequelize",
     "migrate": "npx sequelize-cli db:migrate",
@@ -24,12 +23,10 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
-    "netlify-cli": "^19.0.0",
-    "pug": "^3.0.3",
-    "serverless-http": "^3.2.0"
+    "pug": "^3.0.3"
   },
   "devDependencies": {
-    "mysql2": "^3.11.4",
+    "mysql2": "^3.12.0",
     "nodemon": "^3.1.7",
     "sequelize": "^6.37.5",
     "sequelize-auto": "^0.8.8",
