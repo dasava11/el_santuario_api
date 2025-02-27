@@ -2,6 +2,9 @@ import express from 'express';
 import cors from 'cors'; // Paquete integrado en las dependencias modernas
 import routes from './routes/index.js';
 import db from './models/index.js';
+import dotenv from "dotenv";
+
+dotenv.config({path: '.env'});
 
 const app = express();
 
@@ -77,7 +80,8 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: message });
 });
 
-const PORT = 3011;
+const PORT = process.env.PORT;
+
 app.listen(PORT, () => {
   console.log(`El servidor está funcionando en el puerto ${PORT}`);
 });
