@@ -18,11 +18,11 @@ const createProduct = async (req, res) => {
 
   try {
     console.log(req.body)
-    if (!name || !code || !brand || stock === undefined || taxes_code === undefined || buy_price === undefined || code_earn === undefined) {
+    /* if (!name || !code || !brand || stock === undefined || taxes_code === undefined || buy_price === undefined || code_earn === undefined) {
       return res
         .status(400)
         .json({ message: "Falta diligenciar informacion obligatoria" });
-    }
+    } */
 
     const existingProduct = await products.findOne({
       where: {
