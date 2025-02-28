@@ -17,7 +17,7 @@ const createProduct = async (req, res) => {
   } = req.body;
 
   try {
-    if (!name || unit_price === undefined || !code || !brand || stock === undefined || taxes_code === undefined
+    if (!name || !code || !brand || stock === undefined || taxes_code === undefined
     ) {
       return res
         .status(400)
