@@ -16,6 +16,8 @@ const createProduct = async (req, res) => {
     active,
   } = req.body;
 
+  console.log("Request body recibido en producción:", req.body);
+
   try {
     console.log(req.body)
     if (

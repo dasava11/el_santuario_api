@@ -8,6 +8,10 @@ dotenv.config({path: '.env'});
 
 const app = express();
 
+// habilitar lectura de datos de formularios
+app.use(express.urlencoded({extended: true}))
+app.use(express.json({ limit: "10mb" })); // Habilitar lectura de JSON
+
 // Conexión a la base de datos
 try {
   await db.sequelize.authenticate(); // Usar la instancia de Sequelize
@@ -24,10 +28,6 @@ try {
 } catch (error) {
   console.error('Error conectando a la base de datos:', error);
 }
-
-// habilitar lectura de datos de formularios
-app.use(express.urlencoded({extended: true}))
-app.use(express.json({ limit: "10mb" })); // Habilitar lectura de JSON
 
 // Configuración de CORS
 app.use(
