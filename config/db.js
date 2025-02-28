@@ -4,7 +4,7 @@ dotenv.config({path: '.env'})
 
 const db = new Sequelize (process.env.BD_NOMBRE,process.env.BD_USER,process.env.BD_PASS ?? '',{
     host:process.env.BD_HOST,
-    port:15941,   //3306 puerto conexión local
+    port:15941,   //3306 puerto conexión local 15941, 
     dialect: 'mysql',
     define:{
         timestamps: true
