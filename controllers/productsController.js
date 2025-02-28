@@ -59,7 +59,8 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ message: "El estado del producto no puede ser activo debido a que no hay existencias en su inventario" });
     }
 
-    unit_price = buy_price + (buy_price*(code_earn/100));
+    const calculatedUnitPrice = buy_price + (buy_price * (code_earn / 100));
+
 
     await products.create({
       name,
@@ -68,7 +69,7 @@ const createProduct = async (req, res) => {
       stock,
       buy_price,
       code_earn,
-      unit_price,
+      unit_price: calculatedUnitPrice,
       code,
       taxes_code,
       active: active ?? true,
