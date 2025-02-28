@@ -18,11 +18,19 @@ const createProduct = async (req, res) => {
 
   try {
     console.log(req.body)
-    /* if (!name || !code || !brand || stock === undefined || taxes_code === undefined || buy_price === undefined || code_earn === undefined) {
+    if (
+      !name?.trim() || 
+      !code?.trim() || 
+      !brand?.trim() || 
+      stock === undefined || 
+      taxes_code === undefined || 
+      buy_price === undefined || 
+      code_earn === undefined
+    ) {
       return res
         .status(400)
         .json({ message: "Falta diligenciar informacion obligatoria" });
-    } */
+    }
 
     const existingProduct = await products.findOne({
       where: {
@@ -46,7 +54,7 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ message: `El código ${code} ya existe` });
     }
 
-    if (unit_price <= 0 || isNaN(unit_price)) {
+    if (buy_price <= 0 || isNaN(buy_price)) {
       return res.status(400).json({ message: "El precio debe ser un número positivo" });
     }
 
@@ -58,8 +66,7 @@ const createProduct = async (req, res) => {
       return res.status(400).json({ message: "El estado del producto no puede ser activo debido a que no hay existencias en su inventario" });
     }
 
-    const calculatedUnitPrice = buy_price + (buy_price * (code_earn / 100));
-
+    let calculatedUnitPrice = buy_price + (buy_price * (code_earn / 100));
 
     await products.create({
       name,
@@ -75,7 +82,8 @@ const createProduct = async (req, res) => {
     });
     return res.status(201).json({ message: `${name} fue creado con exito` });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error en createProduct:", error);
+    res.status(500).json({ error: error.message || "Error interno del servidor" });
   }
 };
 
