@@ -11,7 +11,6 @@ const createProduct = async (req, res) => {
     stock,
     buy_price,
     code_earn,
-    unit_price,
     code,
     taxes_code,
     active,
