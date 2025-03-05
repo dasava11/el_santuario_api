@@ -236,7 +236,7 @@ const editProduct = async (req, res) => {
       fieldsToUpdate.buy_price = buy_price;
     }
 
-    if (code_earn !== undefined) fieldsToUpdate.code_earn = code_earn.trim();
+    if (code_earn !== undefined) fieldsToUpdate.code_earn = code_earn;
     if (code !== undefined) fieldsToUpdate.code = code.trim();
     if (taxes_code !== undefined) fieldsToUpdate.taxes_code = taxes_code.trim();
 
