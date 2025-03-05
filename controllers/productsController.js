@@ -191,10 +191,9 @@ const getProductByCode = async (req,res) => {
 }
 };
 
- 
 const editProduct = async (req, res) => {
   const { products } = db.models;
-  const {product_id} = req.params
+  const { product_id } = req.params;
   const {
     name,
     description,
@@ -221,6 +220,7 @@ const editProduct = async (req, res) => {
     if (name !== undefined) fieldsToUpdate.name = name.trim(); 
     if (description !== undefined) fieldsToUpdate.description = description.trim();
     if (brand !== undefined) fieldsToUpdate.brand = brand.trim();
+    if (code !== undefined) fieldsToUpdate.code = code.trim();
   
     if (stock !== undefined) {
       if (stock < 0 || !Number.isInteger(stock)) {
@@ -233,26 +233,23 @@ const editProduct = async (req, res) => {
       if (buy_price <= 0 || isNaN(buy_price)) {
         return res.status(400).json({ message: "El precio debe ser un número positivo" });
       }
-      fieldsToUpdate.buy_price = buy_price;
+      fieldsToUpdate.buy_price = Number(buy_price);
     }
 
-if (code_earn !== undefined) {
-  if (code_earn < 0 || isNaN(code_earn)) {
-    return res.status(400).json({ message: "El código de ganancia debe ser un número positivo" });
-  }
-  fieldsToUpdate.code_earn = Number(code_earn);
-}
+    if (code_earn !== undefined) {
+      if (code_earn < 0 || isNaN(code_earn)) {
+        return res.status(400).json({ message: "El código de ganancia debe ser un número positivo" });
+      }
+      fieldsToUpdate.code_earn = Number(code_earn);
+    }
 
-if (taxes_code !== undefined) {
-  if (taxes_code < 0 || isNaN(taxes_code)) {
-    return res.status(400).json({ message: "El código de impuestos debe ser un número positivo" });
-  }
-  fieldsToUpdate.taxes_code = Number(taxes_code);
-}
-
-if (code !== undefined) fieldsToUpdate.code = code.trim();
+    if (taxes_code !== undefined) {
+      if (taxes_code < 0 || isNaN(taxes_code)) {
+        return res.status(400).json({ message: "El código de impuestos debe ser un número positivo" });
+      }
+      fieldsToUpdate.taxes_code = Number(taxes_code);
+    }
   
-    // Validación para 'active' si se proporciona
     if (active !== undefined) {
       if (typeof active !== "boolean") {
         return res.status(400).json({ message: "El campo 'active' debe ser un valor booleano" });
@@ -260,22 +257,20 @@ if (code !== undefined) fieldsToUpdate.code = code.trim();
       fieldsToUpdate.active = active;
     }
 
-    // Cálculo de unit_price
-    const finalBuyPrice = fieldsToUpdate.buy_price ?? existingProduct.buy_price;
-    const finalCodeEarn = fieldsToUpdate.code_earn ?? existingProduct.code_earn;
+    // 🛠 **Calcular `unit_price` siempre que haya un `buy_price` o `code_earn` actualizado**
+    const finalBuyPrice = fieldsToUpdate.buy_price !== undefined ? fieldsToUpdate.buy_price : existingProduct.buy_price;
+    const finalCodeEarn = fieldsToUpdate.code_earn !== undefined ? fieldsToUpdate.code_earn : existingProduct.code_earn;
 
-    if (typeof finalBuyPrice === "number" && typeof finalCodeEarn === "number") {
-      fieldsToUpdate.unit_price = finalBuyPrice + (finalBuyPrice * (finalCodeEarn / 100));
+    if (!isNaN(finalBuyPrice) && !isNaN(finalCodeEarn)) {
+      fieldsToUpdate.unit_price = Number((finalBuyPrice + (finalBuyPrice * (finalCodeEarn / 100))).toFixed(4));
     }
-  
-    // Verificar si hay al menos un campo a actualizar
+
     if (Object.keys(fieldsToUpdate).length === 0) {
       return res.status(400).json({
         message: "No se proporcionaron campos para actualizar",
       });
     }
-  
-    // Actualizar el producto
+
     await existingProduct.update(fieldsToUpdate);
   
     return res.status(200).json({
@@ -285,7 +280,7 @@ if (code !== undefined) fieldsToUpdate.code = code.trim();
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-};
+}; 
 
 const toggleProductStatus = async (req, res) => {
   const { products } = db.models;
