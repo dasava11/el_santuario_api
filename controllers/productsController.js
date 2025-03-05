@@ -244,7 +244,7 @@ const editProduct = async (req, res) => {
       const finalBuyPrice = fieldsToUpdate.buy_price !== undefined ? fieldsToUpdate.buy_price : existingProduct.buy_price;  
       const finalCodeEarn = fieldsToUpdate.code_earn !== undefined ? fieldsToUpdate.code_earn : existingProduct.code_earn;  
     
-      if (finalBuyPrice !== undefined && finalCodeEarn !== undefined) {  
+      if (finalBuyPrice !== undefined || finalCodeEarn !== undefined) {  
         fieldsToUpdate.unit_price = finalBuyPrice + (finalBuyPrice * (finalCodeEarn / 100));  
       }  
     }
