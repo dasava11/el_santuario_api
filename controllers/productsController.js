@@ -236,18 +236,21 @@ const editProduct = async (req, res) => {
       fieldsToUpdate.buy_price = buy_price;
     }
 
-    if (code_earn !== undefined) fieldsToUpdate.code_earn = code_earn;
-    if (code !== undefined) fieldsToUpdate.code = code.trim();
-    if (taxes_code !== undefined) fieldsToUpdate.taxes_code = taxes_code;
+if (code_earn !== undefined) {
+  if (code_earn < 0 || isNaN(code_earn)) {
+    return res.status(400).json({ message: "El código de ganancia debe ser un número positivo" });
+  }
+  fieldsToUpdate.code_earn = Number(code_earn);
+}
 
-    if (buy_price !== undefined || code_earn !== undefined) {  
-      const finalBuyPrice = fieldsToUpdate.buy_price !== undefined ? fieldsToUpdate.buy_price : existingProduct.buy_price;  
-      const finalCodeEarn = fieldsToUpdate.code_earn !== undefined ? fieldsToUpdate.code_earn : existingProduct.code_earn;  
-    
-      if (finalBuyPrice !== undefined || finalCodeEarn !== undefined) {  
-        fieldsToUpdate.unit_price = finalBuyPrice + (finalBuyPrice * (finalCodeEarn / 100));  
-      }  
-    }
+if (taxes_code !== undefined) {
+  if (taxes_code < 0 || isNaN(taxes_code)) {
+    return res.status(400).json({ message: "El código de impuestos debe ser un número positivo" });
+  }
+  fieldsToUpdate.taxes_code = Number(taxes_code);
+}
+
+if (code !== undefined) fieldsToUpdate.code = code.trim();
   
     // Validación para 'active' si se proporciona
     if (active !== undefined) {
@@ -255,6 +258,14 @@ const editProduct = async (req, res) => {
         return res.status(400).json({ message: "El campo 'active' debe ser un valor booleano" });
       }
       fieldsToUpdate.active = active;
+    }
+
+    // Cálculo de unit_price
+    const finalBuyPrice = fieldsToUpdate.buy_price ?? existingProduct.buy_price;
+    const finalCodeEarn = fieldsToUpdate.code_earn ?? existingProduct.code_earn;
+
+    if (typeof finalBuyPrice === "number" && typeof finalCodeEarn === "number") {
+      fieldsToUpdate.unit_price = finalBuyPrice + (finalBuyPrice * (finalCodeEarn / 100));
     }
   
     // Verificar si hay al menos un campo a actualizar
