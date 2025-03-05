@@ -177,7 +177,7 @@ const getProductByCode = async (req,res) => {
           [Op.like]: `%${code}%`,
         },
       },
-      // include: [{ model:detail_purchases, as: "detailpurchase"}, { model:detail_shopping, as: "detailshopping"}],
+      include: [{ model:detail_purchases, as: "detailpurchase"}, { model:detail_shopping, as: "detailshopping"}],
     });
 
     if (productByCode.length === 0){
@@ -200,7 +200,8 @@ const editProduct = async (req, res) => {
     description,
     brand,
     stock,
-    unit_price,
+    buy_price,
+    code_earn,
     code,
     taxes_code,
     active,
@@ -228,15 +229,25 @@ const editProduct = async (req, res) => {
       fieldsToUpdate.stock = stock;
     }
   
-    if (unit_price !== undefined) {
-      if (unit_price <= 0 || isNaN(unit_price)) {
+    if (buy_price !== undefined) {
+      if (buy_price <= 0 || isNaN(buy_price)) {
         return res.status(400).json({ message: "El precio debe ser un número positivo" });
       }
-      fieldsToUpdate.unit_price = unit_price;
+      fieldsToUpdate.buy_price = buy_price;
     }
-  
+
+    if (code_earn !== undefined) fieldsToUpdate.code_earn = code_earn.trim();
     if (code !== undefined) fieldsToUpdate.code = code.trim();
     if (taxes_code !== undefined) fieldsToUpdate.taxes_code = taxes_code.trim();
+
+    if (buy_price !== undefined || code_earn !== undefined) {  
+      const finalBuyPrice = fieldsToUpdate.buy_price !== undefined ? fieldsToUpdate.buy_price : existingProduct.buy_price;  
+      const finalCodeEarn = fieldsToUpdate.code_earn !== undefined ? fieldsToUpdate.code_earn : existingProduct.code_earn;  
+    
+      if (finalBuyPrice !== undefined && finalCodeEarn !== undefined) {  
+        fieldsToUpdate.unit_price = finalBuyPrice + (finalBuyPrice * (finalCodeEarn / 100));  
+      }  
+    }
   
     // Validación para 'active' si se proporciona
     if (active !== undefined) {
