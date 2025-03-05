@@ -220,17 +220,17 @@ const deleteUser = async (req, res) => {
 
 const destroyUser = async (req, res) => {
   const { users, shopping, userType } = db.models;
-  const { id } = req.params;
+  const { user_id } = req.params;
   try {
-    if (!id) {
+    if (!user_id) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
-    if (isNaN(id)) {
+    if (isNaN(user_id)) {
       return res.status(400).json({ message: "Id invalido" });
     }
 
-    const response = await users.findByPk(id);
+    const response = await users.findByPk(user_id);
     await response.destroy();
     return res
       .status(200)
