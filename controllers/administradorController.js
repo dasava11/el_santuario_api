@@ -1,6 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import db from "../models/index.js";
 
+
 const getAllUsers = async (req, res) => {
   const { users, shopping, userType } = db.models; // Desestructuración para obtener el modelo 'users'
 
@@ -153,27 +154,39 @@ const editUser = async (req, res) => {
 
     const fieldsToUpdate = {};
 
-    if (username !== undefined && username.trim() !== existingUser.username.trim()) {
+    const normalizeValue = (value) => (value ? String(value).trim() : "");
+
+    const normalizedUsername = normalizeValue(username);
+    const normalizedEmail = normalizeValue(email);
+    const normalizedPassword = normalizeValue(password);
+
+    if (normalizedUsername !== existingUser.username) {
       fieldsToUpdate.username = username.trim();
     }
-
-    if (password !== undefined && password.trim() !== "") {
-      fieldsToUpdate.password = password; // Se podría hashear aquí antes de guardar
-    }
-
-    if (email !== undefined && email.trim() !== existingUser.email.trim()) {
+    
+    if (normalizedEmail !== existingUser.email) {
       fieldsToUpdate.email = email.trim();
     }
 
-    if (type_user !== undefined && parseInt(type_user) !== parseInt(existingUser.type_user)) {
+    if (normalizedPassword !== existingUser.password) {
+      fieldsToUpdate.password = password;
+    }
+    
+    if (
+      type_user !== undefined &&
+      parseInt(type_user) !== parseInt(existingUser.type_user)
+    ) {
       fieldsToUpdate.type_user = parseInt(type_user);
     }
 
     if (Object.keys(fieldsToUpdate).length === 0) {
+      console.log("No hay cambios detectados.");
       return res.status(200).json({
         message: "No hay cambios que realizar, los datos son los mismos.",
       });
     }
+
+    console.log("Actualizando con:", fieldsToUpdate);
 
     await existingUser.update(fieldsToUpdate);
 
