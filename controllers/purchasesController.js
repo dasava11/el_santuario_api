@@ -43,17 +43,26 @@ const createPurchases = async (req, res) => {
 
   try {
     if (!detailPurchasesBody || detailPurchasesBody.length === 0) {
-      return res.status(400).json({ error: "Debe agregar al menos un producto en la compra." });
+      return res
+        .status(400)
+        .json({ error: "Debe agregar al menos un producto en la compra." });
     }
 
     // Verificar si todos los productos existen antes de continuar
     const productIds = detailPurchasesBody.map((item) => item.id_products);
-    const existingProducts = await products.findAll({ where: { id_products: productIds },
-      transaction });
+    const existingProducts = await products.findAll({
+      where: { id_products: productIds },
+      transaction,
+    });
 
     if (existingProducts.length !== productIds.length) {
-      await transaction.rollback()
-      return res.status(400).json({ error: "Uno o más productos no existen. Verifique los productos antes de realizar la compra." });
+      await transaction.rollback();
+      return res
+        .status(400)
+        .json({
+          error:
+            "Uno o más productos no existen. Verifique los productos antes de realizar la compra.",
+        });
     }
 
     let price = 0;
@@ -61,23 +70,24 @@ const createPurchases = async (req, res) => {
 
     for (let item of detailPurchasesBody) {
       price += item.unit_price * item.count;
-      taxes += ((item.value_taxes / 100) * item.unit_price) * item.count; 
+      taxes += (item.value_taxes / 100) * item.unit_price * item.count;
     }
 
     const total_price = price + taxes;
 
     // Crear la compra
-    const newPurchase = await purchases.create({
-      date,
-      count: detailPurchasesBody.length,
-      price,
-      supplier,
-      taxes,
-      subtotal: price,
-      total_price,
-    },
-    { transaction }
-  );
+    const newPurchase = await purchases.create(
+      {
+        date,
+        count: detailPurchasesBody.length,
+        price,
+        supplier,
+        taxes,
+        subtotal: price,
+        total_price,
+      },
+      { transaction }
+    );
 
     // Crear detalles de la compra y actualizar stock en una sola transacción
     const purchaseDetails = detailPurchasesBody.map((item) => ({
@@ -86,19 +96,23 @@ const createPurchases = async (req, res) => {
       count: item.count,
       unit_price: item.unit_price,
       value_taxes: item.value_taxes,
-      total: (item.unit_price + (item.unit_price * item.value_taxes) / 100) * item.count,
+      total:
+        (item.unit_price + (item.unit_price * item.value_taxes) / 100) *
+        item.count,
     }));
 
     await detailPurchases.bulkCreate(purchaseDetails, { transaction });
 
     // Actualizar stock de productos en la BD
     for (const product of existingProducts) {
-      const purchasedItem = detailPurchasesBody.find((item) => item.id_products === product.id_products);
+      const purchasedItem = detailPurchasesBody.find(
+        (item) => item.id_products === product.id_products
+      );
       product.stock += purchasedItem.count;
       await product.save({ transaction });
     }
 
-    await transaction.commit()
+    await transaction.commit();
 
     res.status(201).json({
       message: "Compra al proveedor generada con éxito. Stock actualizado.",
@@ -109,7 +123,6 @@ const createPurchases = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
 
 // Actualizar una compra existente
 const editPurchases = async (req, res) => {
@@ -161,10 +174,10 @@ const deletePurchases = async (req, res) => {
 // Eliminar (borrado físico) una compra
 
 const destroyPurchases = async (req, res) => {
-  const { product_id } = req.params;
+  const { purchase_id } = req.params;
 
   try {
-    const purchase = await purchases.findByPk(product_id);
+    const purchase = await purchases.findByPk(purchase_id);
     if (!purchase) {
       return res.status(404).json({ message: "Compra no encontrada" });
     }
