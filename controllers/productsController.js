@@ -31,13 +31,7 @@ const createProduct = async (req, res) => {
     ) {
       return res
         .status(400)
-        .json({ message: "Falta diligenciar informacion obligatoria" + "1" + !name?.trim() + 
-         "2" + !code?.trim() + 
-         "3" + !brand?.trim() + 
-         "4" + (stock === undefined) +
-         "5" + taxes_code === undefined +
-         "6" + buy_price === undefined +
-         "7" + code_earn === undefined });
+        .json({ message: "Falta diligenciar informacion obligatoria" });
     }
 
     const existingProduct = await products.findOne({
