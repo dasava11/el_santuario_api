@@ -53,7 +53,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/suppliers/:
+ * /suppliers/:
  *   get:
  *     summary: Obtener todos los proveedores
  *     tags: [Suppliers]
@@ -71,7 +71,7 @@ router.get("/", getAllSuppliers);
 
 /**
  * @swagger
- * /api/suppliers/byid/{supplier_id}:
+ * /suppliers/byid/{supplier_id}:
  *   get:
  *     summary: Obtener un proveedor por ID
  *     tags: [Suppliers]
@@ -96,7 +96,7 @@ router.get("/byid/:supplier_id", getSuppliersById);
 
 /**
  * @swagger
- * /api/suppliers/name/:
+ * /suppliers/name/:
  *   get:
  *     summary: Buscar proveedores por nombre
  *     tags: [Suppliers]
@@ -116,7 +116,7 @@ router.get("/name/", getSuppliersByName);
 
 /**
  * @swagger
- * /api/suppliers/:
+ * /suppliers/:
  *   post:
  *     summary: Crear un nuevo proveedor
  *     tags: [Suppliers]
@@ -158,7 +158,7 @@ router.post("/", createSuppliers);
 
 /**
  * @swagger
- * /api/suppliers/{supplier_id}:
+ * /suppliers/{supplier_id}:
  *   put:
  *     summary: Editar un proveedor
  *     tags: [Suppliers]
@@ -207,7 +207,7 @@ router.put("/:supplier_id", editSuppliers);
 
 /**
  * @swagger
- * /api/suppliers/delete/{supplier_id}:
+ * /suppliers/delete/{supplier_id}:
  *   delete:
  *     summary: Desactivar un proveedor (borrado lógico)
  *     tags: [Suppliers]
@@ -228,7 +228,7 @@ router.delete("/delete/:supplier_id", deleteSuppliers);
 
 /**
  * @swagger
- * /api/suppliers/destroy/{supplier_id}:
+ * /suppliers/destroy/{supplier_id}:
  *   delete:
  *     summary: Eliminar un proveedor permanentemente
  *     tags: [Suppliers]

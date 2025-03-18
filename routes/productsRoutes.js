@@ -64,7 +64,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/products/:
+ * /products/:
  *   get:
  *     summary: Obtener todos los productos
  *     tags: [Products]
@@ -82,7 +82,7 @@ router.get("/", getAllProducts);
 
 /**
  * @swagger
- * /api/products/byid/{id_products}:
+ * /products/byid/{id_products}:
  *   get:
  *     summary: Obtener producto por ID
  *     tags: [Products]
@@ -107,7 +107,7 @@ router.get("/byid/:id_products", getProductById);
 
 /**
  * @swagger
- * /api/products/name/:
+ * /products/name/:
  *   get:
  *     summary: Buscar producto por nombre
  *     tags: [Products]
@@ -132,7 +132,7 @@ router.get("/name/", getProductByName);
 
 /**
  * @swagger
- * /api/products/code/{code}:
+ * /products/code/{code}:
  *   get:
  *     summary: Buscar producto por código
  *     tags: [Products]
@@ -157,7 +157,7 @@ router.get("/code/:code", getProductByCode);
 
 /**
  * @swagger
- * /api/products/:
+ * /products/:
  *   post:
  *     summary: Crear un nuevo producto
  *     tags: [Products]
@@ -177,7 +177,7 @@ router.post("/", createProduct);
 
 /**
  * @swagger
- * /api/products/{id_products}:
+ * /products/{id_products}:
  *   put:
  *     summary: Editar un producto
  *     tags: [Products]
@@ -204,7 +204,7 @@ router.put("/:id_products", editProduct);
 
 /**
  * @swagger
- * /api/products/delete/{id_products}:
+ * /products/delete/{id_products}:
  *   delete:
  *     summary: Cambiar el estado de un producto (activo/inactivo)
  *     tags: [Products]

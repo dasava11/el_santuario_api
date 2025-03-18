@@ -37,7 +37,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/userType/:
+ * /userType/:
  *   get:
  *     summary: Obtener todos los tipos de usuario
  *     tags: [UserType]
@@ -55,7 +55,7 @@ router.get("/", getAllTypeUsers);
 
 /**
  * @swagger
- * /api/userType/byid/{id_userType}:
+ * /userType/byid/{id_userType}:
  *   get:
  *     summary: Obtener un tipo de usuario por ID
  *     tags: [UserType]
@@ -80,7 +80,7 @@ router.get("/byid/:id_userType", getTypeUserById);
 
 /**
  * @swagger
- * /api/userType/rol/:
+ * /userType/rol/:
  *   get:
  *     summary: Buscar tipos de usuario por nombre de rol
  *     tags: [UserType]
@@ -100,7 +100,7 @@ router.get("/rol/", getTypeUserByName);
 
 /**
  * @swagger
- * /api/userType/:
+ * /userType/:
  *   post:
  *     summary: Crear un nuevo tipo de usuario
  *     tags: [UserType]
@@ -127,7 +127,7 @@ router.post("/", createTypeUser);
 
 /**
  * @swagger
- * /api/userType/{typeUser_id}:
+ * /userType/{typeUser_id}:
  *   put:
  *     summary: Editar un tipo de usuario
  *     tags: [UserType]
@@ -161,7 +161,7 @@ router.put("/:typeUser_id", editTypeUser);
 
 /**
  * @swagger
- * /api/userType/{id_userType}:
+ * /userType/{id_userType}:
  *   delete:
  *     summary: Eliminar un tipo de usuario
  *     tags: [UserType]

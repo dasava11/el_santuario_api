@@ -9,14 +9,28 @@ dotenv.config({ path: ".env" });
 const app = express();
 
 // 🛑 Habilitar CORS antes de definir las rutas
+// Configuración de CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // Permitir solo desde este frontend
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // Permitir envío de cookies si se necesitan
+    origin: '*', // Permitir solicitudes desde cualquier origen
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Métodos permitidos
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
+    credentials: true, // Habilitar envío de cookies si es necesario
   })
 );
+
+// Configuración para manejar cookies sin cookie-parser
+app.use((req, res, next) => {
+  req.cookies = {}; // Crear un objeto para almacenar cookies
+  const cookieHeader = req.headers.cookie;
+  if (cookieHeader) {
+    cookieHeader.split(';').forEach((cookie) => {
+      const [key, value] = cookie.split('=');
+      req.cookies[key.trim()] = decodeURIComponent(value);
+    });
+  }
+  next();
+});
 
 // 🛑 Habilitar JSON y formularios
 app.use(express.urlencoded({ extended: true }));
@@ -87,10 +101,17 @@ app.use((err, req, res, next) => {
   res.status(status).json({ error: message });
 });
 
+
+// Configuración de Pug
+app.set('view engine', 'pug');
+app.set('views', './views');
+
+// Usar rutas
+app.use(routes);
 // 🛑 Solo un `app.listen()`
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`El servidor está funcionando en http://localhost:${PORT}`);
+  console.log(`El servidor está funcionando en ${PORT}`);
 });
 
 export { db };

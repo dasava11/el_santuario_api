@@ -52,7 +52,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/purchases/:
+ * /purchases/:
  *   get:
  *     summary: Obtener todas las compras
  *     tags: [Purchases]
@@ -70,7 +70,7 @@ router.get('/', getAllPurchases);
 
 /**
  * @swagger
- * /api/purchases/byid/{purchase_id}:
+ * /purchases/byid/{purchase_id}:
  *   get:
  *     summary: Obtener una compra por ID
  *     tags: [Purchases]
@@ -95,7 +95,7 @@ router.get('/byid/:purchase_id', getPurchasesById);
 
 /**
  * @swagger
- * /api/purchases/:
+ * /purchases/:
  *   post:
  *     summary: Crear una nueva compra
  *     tags: [Purchases]
@@ -134,7 +134,7 @@ router.post('/', createPurchases);
 
 /**
  * @swagger
- * /api/purchases/{purchase_id}:
+ * /purchases/{purchase_id}:
  *   put:
  *     summary: Editar una compra
  *     tags: [Purchases]
@@ -180,7 +180,7 @@ router.put('/:purchase_id', editPurchases);
 
 /**
  * @swagger
- * /api/purchases/destroy/{purchase_id}:
+ * /purchases/destroy/{purchase_id}:
  *   delete:
  *     summary: Eliminar una compra de forma permanente
  *     tags: [Purchases]
