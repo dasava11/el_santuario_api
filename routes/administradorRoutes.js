@@ -44,7 +44,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /users/:
+ * /manager/:
  *   get:
  *     summary: Obtener todos los usuarios
  *     tags: [Users]
@@ -62,7 +62,7 @@ router.get("/", getAllUsers);
 
 /**
  * @swagger
- * /users/byid/{id_user}:
+ * /manager/byid/{id_user}:
  *   get:
  *     summary: Obtener usuario por ID
  *     tags: [Users]
@@ -87,7 +87,7 @@ router.get("/byid/:id_user", getUserById);
 
 /**
  * @swagger
- * /users/name/:
+ * /manager/name/:
  *   get:
  *     summary: Buscar usuario por nombre
  *     tags: [Users]
@@ -112,7 +112,7 @@ router.get("/name/", getUserByName);
 
 /**
  * @swagger
- * /users/:
+ * /manager/:
  *   post:
  *     summary: Crear un nuevo usuario
  *     tags: [Users]
@@ -145,7 +145,7 @@ router.post("/", createUser);
 
 /**
  * @swagger
- * /users/{id_user}:
+ * /manager/{id_user}:
  *   put:
  *     summary: Editar un usuario
  *     tags: [Users]
@@ -172,7 +172,7 @@ router.put("/:id_user", editUser);
 
 /**
  * @swagger
- * /users/delete/{id_user}:
+ * /manager/delete/{id_user}:
  *   delete:
  *     summary: Eliminar usuario (borrado lógico)
  *     tags: [Users]
@@ -193,7 +193,7 @@ router.delete("/delete/:id_user", deleteUser);
 
 /**
  * @swagger
- * /users/destroy/{id_user}:
+ * /manager/destroy/{id_user}:
  *   delete:
  *     summary: Eliminar usuario (borrado físico)
  *     tags: [Users]
