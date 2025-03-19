@@ -71,7 +71,9 @@ const getSuppliersById = async (req, res) => {
     if (!supplierById) {
       return res
         .status(404)
-        .json({ message: `No se encontraron proveedores con el id: ${supplier_id}` });
+        .json({
+          message: `No se encontraron proveedores con el id: ${supplier_id}`,
+        });
     }
 
     return res.status(200).json(supplierById);
@@ -96,7 +98,7 @@ const getSuppliersByName = async (req, res) => {
           [Op.like]: `%${name}%`,
         },
       },
-      include: [{ model: purchases, as: "purchase" }],
+      include: [{ model: purchases, as: "purchases" }],
     });
 
     if (supplierByName.length === 0) {
@@ -113,7 +115,7 @@ const getSuppliersByName = async (req, res) => {
 
 const editSuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const {supplier_id} = req.params
+  const { supplier_id } = req.params;
   const { nit, name, address, city, phone, email } = req.body;
 
   try {
@@ -177,7 +179,9 @@ const deleteSuppliers = async (req, res) => {
     if (!existingSupplier) {
       return res
         .status(404)
-        .json({ message: `No se encontraron proveedores con el id: ${supplier_id}` });
+        .json({
+          message: `No se encontraron proveedores con el id: ${supplier_id}`,
+        });
     }
 
     if (existingSupplier.active === 1) {
