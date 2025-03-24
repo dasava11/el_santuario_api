@@ -295,9 +295,11 @@ const editProduct = async (req, res) => {
         ? fieldsToUpdate.code_earn
         : existingProduct.code_earn;
 
+        let finaleErnRate = finalCodeEarn / 100
+
     if (!isNaN(finalBuyPrice) && !isNaN(finalCodeEarn)) {
       fieldsToUpdate.unit_price = Number(
-        (finalBuyPrice + finalBuyPrice * (finalCodeEarn / 100)).toFixed(4)
+        (finalBuyPrice + finalBuyPrice * (1 + finaleErnRate)).toFixed(4)
       );
     }
 

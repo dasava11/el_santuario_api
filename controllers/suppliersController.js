@@ -59,12 +59,13 @@ const getAllSuppliers = async (req, res) => {
 
 const getSuppliersById = async (req, res) => {
   const { suppliers, purchases } = db.models;
-  const { supplier_id } = req.params;
+  const { supplier_id, id_supplier } = req.params;
+  const id = supplier_id || id_supplier
   try {
-    if (!supplier_id) {
+    if (!id) {
       return res.status(400).json({ message: "No se envió un id" });
     }
-    const supplierById = await suppliers.findByPk(supplier_id, {
+    const supplierById = await suppliers.findByPk(id, {
       include: [{ model: purchases, as: "purchases" }],
     });
 

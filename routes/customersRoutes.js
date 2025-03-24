@@ -90,7 +90,7 @@ router.get("/", getAllCustomers);
  *       404:
  *         description: Cliente no encontrado
  */
-router.get("/byid/:id_customers", getCustomerById);
+router.get("/byid/:customers_id", getCustomerById);
 
 /**
  * @swagger
@@ -117,6 +117,7 @@ router.get("/byid/:id_customers", getCustomerById);
  *       404:
  *         description: No se encontraron clientes con ese nombre
  */
+
 router.get("/name/", getCustomerByName);
 
 /**
