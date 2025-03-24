@@ -75,8 +75,8 @@ const createProduct = async (req, res) => {
             "El estado del producto no puede ser activo debido a que no hay existencias en su inventario",
         });
     }
-
-    let calculatedUnitPrice = buy_price + buy_price * (code_earn / 100);
+    const earnRate = code_earn / 100
+    let calculatedUnitPrice = buy_price * (1 + earnRate);
 
     await products.create({
       name,
