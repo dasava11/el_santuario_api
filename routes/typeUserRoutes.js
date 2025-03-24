@@ -127,13 +127,13 @@ router.post("/", createTypeUser);
 
 /**
  * @swagger
- * /userType/{typeUser_id}:
+ * /userType/{id_userType}:
  *   put:
  *     summary: Editar un tipo de usuario
  *     tags: [UserType]
  *     parameters:
  *       - in: path
- *         name: typeUser_id
+ *         name: id_userType
  *         required: true
  *         schema:
  *           type: integer
@@ -157,7 +157,7 @@ router.post("/", createTypeUser);
  *       404:
  *         description: Tipo de usuario no encontrado
  */
-router.put("/:typeUser_id", editTypeUser);
+router.put("/:id_userType", editTypeUser);
 
 /**
  * @swagger

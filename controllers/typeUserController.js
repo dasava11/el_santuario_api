@@ -49,21 +49,20 @@ const getAllTypeUsers = async (req, res) => {
 };
 
 const getTypeUserById = async (req, res) => {
-  const { typeUser_id, id_userType} = req.params;
-  const idType =  typeUser_id || id_userType
+  const {id_userType} = req.params;
     try {
-        if (idType) {
+        if (id_userType) {
             return res
               .status(400)
               .json({ message: "No se envió un id y este es requerido." });
           }
         
-          const typeUserById = await userType.findByPk(idType)
+          const typeUserById = await userType.findByPk(id_userType)
           
           if (!typeUserById) {
             return res
               .status(404)
-              .json({ message: `No se encontraron tipos de usuarios con el id: ${idType}` });
+              .json({ message: `No se encontraron tipos de usuarios con el id: ${id_userType}` });
           }
       
           return res.status(200).json(typeUserById);

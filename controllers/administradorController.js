@@ -205,7 +205,7 @@ const deleteUser = async (req, res) => {
   const { user_id, id_user } = req.params;
   const idUser = user_id || id_user
   try {
-    if (!user_id) {
+    if (!idUser) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
