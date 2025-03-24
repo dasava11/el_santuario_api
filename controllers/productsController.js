@@ -121,19 +121,20 @@ const getProductById = async (req, res) => {
   const { products } = db.models;
   try {
     console.log("Params en controlador:", req.params);
-    const { product_id } = req.params;
+    const { product_id, id_products } = req.params;
+    const id = product_id || id_products; // Toma el que venga
 
-    if (!product_id) {
+    if (!id) {
       return res.status(400).json({ message: "No se envio un id" });
     }
 
-    const productById = await products.findByPk(product_id);
+    const productById = await products.findByPk(id);
 
     if (!productById) {
       return res
         .status(404)
         .json({
-          message: `no se encontraron productos con el id: ${product_id}`,
+          message: `no se encontraron productos con el id: ${id}`,
         });
     }
 
