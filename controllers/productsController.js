@@ -120,6 +120,7 @@ const getAllProducts = async (req, res) => {
 const getProductById = async (req, res) => {
   const { products } = db.models;
   try {
+    console.log("Params en controlador:", req.params);
     const { product_id } = req.params;
 
     if (!product_id) {
