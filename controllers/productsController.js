@@ -206,6 +206,7 @@ const getProductByCode = async (req, res) => {
 
 const editProduct = async (req, res) => {
   const { products } = db.models;
+  console.log("Params en controlador:", req.params);
   const { product_id } = req.params;
   const {
     name,
