@@ -158,13 +158,13 @@ router.post("/", createSuppliers);
 
 /**
  * @swagger
- * /suppliers/{supplier_id}:
+ * /suppliers/{id_suppliers}:
  *   put:
  *     summary: Editar un proveedor
  *     tags: [Suppliers]
  *     parameters:
  *       - in: path
- *         name: supplier_id
+ *         name: id_suppliers
  *         required: true
  *         schema:
  *           type: integer
@@ -203,17 +203,17 @@ router.post("/", createSuppliers);
  *       404:
  *         description: Proveedor no encontrado
  */
-router.put("/:supplier_id", editSuppliers);
+router.put("/:id_suppliers", editSuppliers);
 
 /**
  * @swagger
- * /suppliers/delete/{supplier_id}:
+ * /suppliers/delete/{id_suppliers}:
  *   delete:
  *     summary: Desactivar un proveedor (borrado lógico)
  *     tags: [Suppliers]
  *     parameters:
  *       - in: path
- *         name: supplier_id
+ *         name: id_suppliers
  *         required: true
  *         schema:
  *           type: integer
@@ -224,17 +224,17 @@ router.put("/:supplier_id", editSuppliers);
  *       404:
  *         description: Proveedor no encontrado
  */
-router.delete("/delete/:supplier_id", deleteSuppliers);
+router.delete("/delete/:id_suppliers", deleteSuppliers);
 
 /**
  * @swagger
- * /suppliers/destroy/{supplier_id}:
+ * /suppliers/destroy/{id_suppliers}:
  *   delete:
  *     summary: Eliminar un proveedor permanentemente
  *     tags: [Suppliers]
  *     parameters:
  *       - in: path
- *         name: supplier_id
+ *         name: id_suppliers
  *         required: true
  *         schema:
  *           type: integer
@@ -245,6 +245,6 @@ router.delete("/delete/:supplier_id", deleteSuppliers);
  *       404:
  *         description: Proveedor no encontrado
  */
-router.delete("/destroy/:supplier_id", destroySuppliers);
+router.delete("/destroy/:id_suppliers", destroySuppliers);
 
 export default router;

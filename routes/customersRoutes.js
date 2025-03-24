@@ -90,7 +90,7 @@ router.get("/", getAllCustomers);
  *       404:
  *         description: Cliente no encontrado
  */
-router.get("/byid/:customers_id", getCustomerById);
+router.get("/byid/:customers_id", getCustomerById); 
 
 /**
  * @swagger
@@ -223,6 +223,6 @@ router.put("/:id_customers", editCustomer);
  *       404:
  *         description: Cliente no encontrado
  */
-router.delete("/:customer_id", deleteCustomer);
+router.delete("/:id_customers", deleteCustomer);
 
 export default router;

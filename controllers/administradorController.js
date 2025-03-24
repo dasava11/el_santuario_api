@@ -141,15 +141,16 @@ const createUser = async (req, res) => {
 
 const editUser = async (req, res) => {
   const { users } = db.models;
-  const {user_id} = req.params
+  const { user_id, id_user } = req.params;
+  const idUser = user_id || id_user
   const { username, password, email, type_user } = req.body;
 
   try {
-    const existingUser = await users.findByPk(user_id);
+    const existingUser = await users.findByPk(idUser);
 
     if (!existingUser) {
       return res.status(404).json({
-        message: `No se encontraron usuarios con el id: ${user_id}`,
+        message: `No se encontraron usuarios con el id: ${idUser}`,
       });
     }
 
@@ -201,18 +202,19 @@ const editUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   const { users } = db.models;
-  const { user_id } = req.params;
+  const { user_id, id_user } = req.params;
+  const idUser = user_id || id_user
   try {
     if (!user_id) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
-    const existingUser = await users.findByPk(user_id);
+    const existingUser = await users.findByPk(idUser);
 
     if (!existingUser) {
       return res
         .status(404)
-        .json({ message: `No se encontraron usuarios con el id: ${user_id}` });
+        .json({ message: `No se encontraron usuarios con el id: ${idUser}` });
     }
 
     const newActiveStatus = existingUser.active === true || existingUser.active === 1 ? false : true;
@@ -233,18 +235,19 @@ const deleteUser = async (req, res) => {
 };
 
 const destroyUser = async (req, res) => {
-  const { users, shopping, userType } = db.models;
-  const { user_id } = req.params;
+  const { users } = db.models;
+  const { user_id, id_user } = req.params;
+  const idUser = user_id || id_user
   try {
     if (!user_id) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
-    if (isNaN(user_id)) {
+    if (isNaN(idUser)) {
       return res.status(400).json({ message: "Id invalido" });
     }
 
-    const response = await users.findByPk(user_id);
+    const response = await users.findByPk(idUser);
     await response.destroy();
     return res
       .status(200)

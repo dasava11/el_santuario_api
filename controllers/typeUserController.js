@@ -49,20 +49,21 @@ const getAllTypeUsers = async (req, res) => {
 };
 
 const getTypeUserById = async (req, res) => {
-    const {id_userType} = req.params
+  const { typeUser_id, id_userType} = req.params;
+  const idType =  typeUser_id || id_userType
     try {
-        if (!id_userType) {
+        if (idType) {
             return res
               .status(400)
               .json({ message: "No se envió un id y este es requerido." });
           }
         
-          const typeUserById = await userType.findByPk(id_userType)
+          const typeUserById = await userType.findByPk(idType)
           
           if (!typeUserById) {
             return res
               .status(404)
-              .json({ message: `No se encontraron tipos de usuarios con el id: ${id}` });
+              .json({ message: `No se encontraron tipos de usuarios con el id: ${idType}` });
           }
       
           return res.status(200).json(typeUserById);
@@ -102,15 +103,16 @@ const getTypeUserByName = async (req, res) =>{
 };
 
 const editTypeUser = async (req, res) => {
-    const { typeUser_id } = req.params;
+    const { typeUser_id, id_userType} = req.params;
+    const idType =  typeUser_id || id_userType
     const { rol } = req.body;
     
       try {
-        const existingTypeUser = await userType.findByPk(typeUser_id);
+        const existingTypeUser = await userType.findByPk(idType);
     
         if (!existingTypeUser) {
           return res.status(404).json({
-            message: `No se encontraron tipos de usuarios con el id: ${typeUser_id}`,
+            message: `No se encontraron tipos de usuarios con el id: ${idType}`,
           });
         }
     
@@ -139,18 +141,20 @@ const editTypeUser = async (req, res) => {
 
 const deleteTypeUser = async (req, res) => {
 
-  const { id_userType } = req.params;
+  const { typeUser_id, id_userType} = req.params;
+  const idType =  typeUser_id || id_userType
+
   try {
     if (!id_userType) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
-    const existingTypeUser = await userType.findByPk(id_userType);
+    const existingTypeUser = await userType.findByPk(idType);
 
     if (!existingTypeUser) {
       return res
         .status(404)
-        .json({ message: `No se encontraron tipos de usuarios con el id seleccionado: ${id}` });
+        .json({ message: `No se encontraron tipos de usuarios con el id seleccionado: ${idType}` });
     }
 
     const newActiveStatus = existingTypeUser.active === 1 || existingTypeUser.active === true ? false : true;
