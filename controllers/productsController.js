@@ -207,7 +207,7 @@ const getProductByCode = async (req, res) => {
 const editProduct = async (req, res) => {
   const { products } = db.models;
   console.log("Params en controlador:", req.params);
-  const { product_id } = req.params;
+  const { id_products } = req.params;
   const {
     name,
     description,
@@ -221,11 +221,11 @@ const editProduct = async (req, res) => {
   } = req.body;
 
   try {
-    const existingProduct = await products.findByPk(product_id);
+    const existingProduct = await products.findByPk(id_products);
 
     if (!existingProduct) {
       return res.status(404).json({
-        message: `No se encontró un producto con el id: ${product_id}`,
+        message: `No se encontró un producto con el id: ${id_products}`,
       });
     }
 
@@ -322,15 +322,15 @@ const editProduct = async (req, res) => {
 
 const toggleProductStatus = async (req, res) => {
   const { products } = db.models;
-  const { product_id } = req.params;
+  const { id_products } = req.params;
   try {
-    const existingProduct = await products.findByPk(product_id);
+    const existingProduct = await products.findByPk(id_products);
 
     if (!existingProduct) {
       return res
         .status(404)
         .json({
-          message: `No se encontró el producto con el id: ${product_id}`,
+          message: `No se encontró el producto con el id: ${id_products}`,
         });
     }
 
