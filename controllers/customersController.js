@@ -165,13 +165,13 @@ const editCustomer = async (req, res) => {
 // evaluar si es necesario este servicio, de serlo debe añadirse un atributo de active
 const deleteCustomer = async (req, res) => {
   const { customers } = db.models;
-  const { id } = req.params;
+  const { id_customers } = req.params;
   try {
-    if (!id) {
+    if (!id_customers) {
       return res.status(400).json({ message: "No se envió un id" });
     }
 
-    const existingCustomer = await customers.findByPk(id);
+    const existingCustomer = await customers.findByPk(id_customers);
 
     if (!existingCustomer) {
       return res

@@ -116,15 +116,15 @@ const getSuppliersByName = async (req, res) => {
 
 const editSuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const { supplier_id } = req.params;
+  const { id_suppliers } = req.params;
   const { nit, name, address, city, phone, email } = req.body;
 
   try {
-    const existingSupplier = await suppliers.findByPk(supplier_id);
+    const existingSupplier = await suppliers.findByPk(id_suppliers);
 
     if (!existingSupplier) {
       return res.status(404).json({
-        message: `No se encontraron proveedores con el id: ${supplier_id}`,
+        message: `No se encontraron proveedores con el id: ${id_suppliers}`,
       });
     }
 
@@ -167,21 +167,21 @@ const editSuppliers = async (req, res) => {
 
 const deleteSuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const { supplier_id } = req.params;
+  const { id_suppliers } = req.params;
   try {
-    if (!supplier_id) {
+    if (!id_suppliers) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
 
-    const existingSupplier = await suppliers.findByPk(supplier_id);
+    const existingSupplier = await suppliers.findByPk(id_suppliers);
 
     if (!existingSupplier) {
       return res
         .status(404)
         .json({
-          message: `No se encontraron proveedores con el id: ${supplier_id}`,
+          message: `No se encontraron proveedores con el id: ${id_suppliers}`,
         });
     }
 
@@ -203,19 +203,19 @@ const deleteSuppliers = async (req, res) => {
 
 const destroySuppliers = async (req, res) => {
   const { suppliers } = db.models;
-  const { supplier_id } = req.params;
+  const { id_suppliers } = req.params;
   try {
-    if (!supplier_id) {
+    if (!id_suppliers) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
 
-    if (isNaN(supplier_id)) {
+    if (isNaN(id_suppliers)) {
       return res.status(400).json({ message: "Id invalido" });
     }
 
-    const response = await suppliers.findByPk(supplier_id);
+    const response = await suppliers.findByPk(id_suppliers);
     await response.destroy();
     return res
       .status(200)
