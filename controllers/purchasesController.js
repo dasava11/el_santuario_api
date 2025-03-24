@@ -19,10 +19,10 @@ const getAllPurchases = async (req, res) => {
 
 // Obtener compra por ID
 const getPurchasesById = async (req, res) => {
-  const { shopping_id } = req.params; // Asegurarse de que el parámetro coincide con las rutas
+  const { purchase_id } = req.params; // Asegurarse de que el parámetro coincide con las rutas
 
   try {
-    const purchase = await purchases.findByPk(shopping_id, {
+    const purchase = await purchases.findByPk(purchase_id, {
       include: [{ model: detailPurchases, as: "detail_purchases" }],
     });
     if (!purchase) {

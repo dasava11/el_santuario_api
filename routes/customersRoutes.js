@@ -11,7 +11,7 @@ import {
 const router = express.Router();
 
 router.get("/", getAllCustomers);
-router.get("/byid/:id_customers", getCustomerById);
+router.get("/byid/:customers_id", getCustomerById);
 router.get("/name/", getCustomerByName);
 router.post("/", createCustomer);
 router.put("/:id_customers", editCustomer);

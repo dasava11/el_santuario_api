@@ -54,13 +54,15 @@ const getAllCustomers = async (req, res) => {
 const getCustomerById = async (req, res) => {
   const { customers, shopping } = db.models;
   try {
-    const { id_customers } = req.params;
-    if (!id_customers) {
+
+    const { id_customers, customers_id } = req.params;
+    const id = id_customers || customers_id
+    if (!id) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
-    const customerById = await customers.findByPk(id_customers, {
+    const customerById = await customers.findByPk(id, {
       include: [{ model: shopping, as: "shoppings" }],
     });
 

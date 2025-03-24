@@ -23,14 +23,15 @@ const getAllUsers = async (req, res) => {
 
 const getUserById = async (req, res) => {
   const { users, shopping, userType } = db.models;
-  const { user_id } = req.params;
+  const { user_id, id_user } = req.params;
+  const id = user_id || id_user
   try {
-    if (!user_id) {
+    if (!id) {
       return res
         .status(400)
         .json({ message: "No se envió un id y este es requerido." });
     }
-    const userById = await users.findByPk(user_id, {
+    const userById = await users.findByPk(id, {
       include: [
         { model: shopping, as: "shoppings" },
         { model: userType, as: "type_user_user_type" },
